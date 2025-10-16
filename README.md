@@ -1,6 +1,6 @@
-# OWASP Training Platform 
+# OWASP Top 10 Training Platform
 
-A comprehensive cybersecurity training platform based on the OWASP Top 10 vulnerabilities, now powered by PostgreSQL for enhanced performance and scalability.
+A comprehensive, interactive cybersecurity training platform designed to teach developers about the OWASP Top 10 vulnerabilities through hands-on labs, documentation, quizzes, and a gamified learning experience.
 
 ## 🚀 Features
 
@@ -30,19 +30,11 @@ A comprehensive cybersecurity training platform based on the OWASP Top 10 vulner
 - **Progress Reset System**: Individual and system-wide user progress reset
 - **Learning Flow Control**: Sequential activity unlocking and XP management
 
-## 🗄️ Database Migration to PostgreSQL
-
-This version has been migrated from SQLite to PostgreSQL for:
-- **Better Performance**: Optimized for concurrent users
-- **Advanced Features**: JSONB, proper timestamps, better indexing
-- **Scalability**: Production-ready database architecture
-- **Data Integrity**: Enhanced constraints and relationships
-
 ## 📋 Prerequisites
 
 ### System Requirements
 - Python 3.8+
-- PostgreSQL 12+
+- PostgreSQL 12+ (or compatible database)
 - 2GB RAM minimum
 - 1GB disk space
 
@@ -64,9 +56,9 @@ cd owasp-training-platform
 pip install -r requirements.txt
 ```
 
-### 3. PostgreSQL Setup
+### 3. Database Setup
 
-#### Install PostgreSQL
+#### Install Database (PostgreSQL recommended)
 - **Windows**: Download from [postgresql.org](https://www.postgresql.org/download/windows/)
 - **Linux**: `sudo apt-get install postgresql postgresql-contrib`
 - **macOS**: `brew install postgresql`
@@ -103,8 +95,9 @@ FLASK_SECRET_KEY=your-super-secret-key
 ```
 
 ### 5. Initialize Database
+Run the database migrations to set up the schema:
 ```bash
-python init_postgresql.py
+python run_migrations.py
 ```
 
 ### 6. Start the Application
@@ -163,35 +156,15 @@ Visit `http://localhost:8855` to access the platform.
 - Level 10: 6,600 XP
 - Level 20: 53,000 XP
 
-## 🔧 Migration from SQLite
-
-If you have existing SQLite data:
-
-### Automatic Migration
-```bash
-python migrate_sqlite_to_postgresql.py
-```
-
-This will transfer:
-- All user accounts and progress
-- Admin accounts and roles
-- Activity logs and gamification data
-- Achievements and learning activities
-
-### Manual Migration Steps
-1. Ensure PostgreSQL database is set up
-2. Run the migration script
-3. Verify data integrity
-4. Update application configuration
-5. Test all functionality
-
 ## 🏗️ Project Structure
 
 ```
 owasp-training-platform/
 ├── app.py                          # Main Flask application
 ├── config.py                       # Configuration management
-├── database_postgresql.py          # PostgreSQL database module
+├── database_postgresql.py          # Database module
+├── gamification_system.py          # Gamification engine
+├── auth_security.py                # Authentication & security
 ├── data.py                         # Module definitions
 ├── requirements.txt                # Python dependencies
 ├── .env.example                    # Environment template
@@ -201,12 +174,15 @@ owasp-training-platform/
 ├── static/                         # Static assets
 │   ├── css/                       # Stylesheets
 │   ├── js/                        # JavaScript files
+│   │   ├── app.js                 # Main application logic
+│   │   ├── gamification-engine.js # Gamification frontend
+│   │   └── profile-data-loader.js # Profile data handling
 │   └── images/                    # Images and icons
 ├── templates/                      # HTML templates
 │   ├── admin/                     # Admin panel templates
 │   ├── labs/                      # Lab exercise templates
 │   └── *.html                     # Main templates
-├── docs/                          # Documentation files
+├── docs/                          # OWASP documentation
 └── scripts/                       # Utility scripts
 ```
 
@@ -231,14 +207,15 @@ owasp-training-platform/
 
 ## 🧪 Testing
 
-### Run Basic Tests
+### Run Tests
+Test the gamification system:
 ```bash
-python -c "from database_postgresql import get_all_users; print(f'Users: {len(get_all_users())}')"
+python test_gamification_system.py
 ```
 
-### Test Gamification
+Test module unlocking:
 ```bash
-python -c "from database_postgresql import get_user_gamification_data; print(get_user_gamification_data(1))"
+python test_module_unlock.py
 ```
 
 ### Performance Testing
@@ -262,48 +239,43 @@ DB_PASSWORD=strong-production-password
 - Regular security updates
 - Database backup strategy
 - Monitor application logs
+- Change default admin credentials
 
 ### Performance Optimization
-- Enable PostgreSQL connection pooling
+- Enable database connection pooling
 - Configure appropriate indexes
 - Monitor query performance
 - Use caching where appropriate
+- Optimize static asset delivery
 
 ## 📊 Monitoring & Analytics
-
-### Database Monitoring
-```sql
--- Check active connections
-SELECT count(*) FROM pg_stat_activity;
-
--- Monitor query performance
-SELECT query, mean_time, calls FROM pg_stat_statements ORDER BY mean_time DESC;
-```
 
 ### Application Metrics
 - User registration trends
 - Module completion rates
 - Achievement unlock statistics
 - Learning streak analytics
+- Lab completion success rates
+- Assessment performance tracking
 
 ## 🔧 Troubleshooting
 
 ### Common Issues
 
 1. **Database Connection Error**
-   - Check PostgreSQL service status
+   - Check database service status
    - Verify credentials in `.env`
-   - Ensure database exists
+   - Ensure database exists and is accessible
 
-2. **Migration Failures**
-   - Check SQLite database exists
-   - Verify PostgreSQL permissions
-   - Review migration logs
+2. **Module Not Unlocking**
+   - Complete previous module activities
+   - Check gamification system logs
+   - Verify XP requirements are met
 
 3. **Performance Issues**
    - Monitor database connections
-   - Check query execution plans
-   - Review server resources
+   - Check server resources (CPU, RAM)
+   - Review application logs for errors
 
 ### Debug Mode
 Enable debug logging:
@@ -393,7 +365,7 @@ cd owasp-training-platform
 pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your settings
-python init_postgresql.py
+python run_migrations.py
 python app.py
 ```
 
@@ -403,18 +375,21 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- OWASP Foundation for security guidance
-- Flask community for the web framework
-- PostgreSQL team for the database system
-- Contributors and testers
+- OWASP Foundation for security guidance and vulnerability classifications
+- Flask community for the excellent web framework
+- Chart.js for data visualization
+- All contributors and testers who helped improve this platform
 
 ## 📞 Support
 
 For issues and questions:
-1. Check the troubleshooting section
-2. Review the migration guide
+1. Check the troubleshooting section in this README
+2. Review the documentation in the `/docs` folder
 3. Check existing issues on GitHub
-4. Create a new issue with detailed information
+4. Create a new issue with detailed information including:
+   - Error messages and logs
+   - Steps to reproduce
+   - Environment details (OS, Python version, etc.)
 
 ---
 

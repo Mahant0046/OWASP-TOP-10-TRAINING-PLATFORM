@@ -1,4 +1,4 @@
-# OWASP Training Platform - PostgreSQL Edition
+# OWASP Training Platform 
 
 A comprehensive cybersecurity training platform based on the OWASP Top 10 vulnerabilities, now powered by PostgreSQL for enhanced performance and scalability.
 

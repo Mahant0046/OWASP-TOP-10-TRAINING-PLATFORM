@@ -215,18 +215,18 @@ class CodeSigner:
 ## ✅ Security Checklist
 
 ### Supply Chain Security
-- [ ] Verify all dependencies with checksums
-- [ ] Use signed packages when available
-- [ ] Implement dependency scanning
-- [ ] Monitor for known vulnerabilities
-- [ ] Use private package repositories
+-  Verify all dependencies with checksums
+-  Use signed packages when available
+-  Implement dependency scanning
+-  Monitor for known vulnerabilities
+-  Use private package repositories
 
 ### CI/CD Security
-- [ ] Secure build environments
-- [ ] Implement code signing
-- [ ] Use least privilege access
-- [ ] Audit pipeline configurations
-- [ ] Implement approval workflows
+-  Secure build environments
+-  Implement code signing
+-  Use least privilege access
+-  Audit pipeline configurations
+-  Implement approval workflows
 
 ---
 

@@ -185,18 +185,18 @@ class AccountLockout:
 ## ✅ Security Checklist
 
 ### Authentication
-- [ ] Implement strong password policies
-- [ ] Use secure password hashing (bcrypt, Argon2)
-- [ ] Implement account lockout protection
-- [ ] Support multi-factor authentication
-- [ ] Prevent username enumeration
+-  Implement strong password policies
+-  Use secure password hashing (bcrypt, Argon2)
+-  Implement account lockout protection
+-  Support multi-factor authentication
+-  Prevent username enumeration
 
 ### Session Management
-- [ ] Generate cryptographically secure session IDs
-- [ ] Implement proper session timeout
-- [ ] Secure session storage
-- [ ] Regenerate session IDs after login
-- [ ] Implement secure logout
+-  Generate cryptographically secure session IDs
+-  Implement proper session timeout
+-  Secure session storage
+-  Regenerate session IDs after login
+-  Implement secure logout
 
 ---
 

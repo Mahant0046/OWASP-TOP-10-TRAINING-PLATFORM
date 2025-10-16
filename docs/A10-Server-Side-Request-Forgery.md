@@ -396,25 +396,25 @@ class DNSRebindingProtection:
 ## ✅ Security Checklist
 
 ### Input Validation
-- [ ] Validate URL schemes (allow only http/https)
-- [ ] Implement domain whitelist
-- [ ] Block private IP ranges
-- [ ] Validate URL format and structure
-- [ ] Check for URL encoding bypasses
+-  Validate URL schemes (allow only http/https)
+-  Implement domain whitelist
+-  Block private IP ranges
+-  Validate URL format and structure
+-  Check for URL encoding bypasses
 
 ### Network Protection
-- [ ] Implement egress filtering
-- [ ] Use network segmentation
-- [ ] Block access to metadata endpoints
-- [ ] Implement DNS filtering
-- [ ] Monitor outbound connections
+-  Implement egress filtering
+-  Use network segmentation
+-  Block access to metadata endpoints
+-  Implement DNS filtering
+-  Monitor outbound connections
 
 ### Application Security
-- [ ] Use safe HTTP client configurations
-- [ ] Implement request timeouts
-- [ ] Limit response sizes
-- [ ] Disable redirects or limit redirect count
-- [ ] Log all external requests
+-  Use safe HTTP client configurations
+-  Implement request timeouts
+-  Limit response sizes
+-  Disable redirects or limit redirect count
+-  Log all external requests
 
 ## 🎓 Knowledge Check
 

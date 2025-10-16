@@ -571,25 +571,25 @@ REVOKE PROCESS ON *.* FROM 'app_user'@'localhost';
 ## ✅ Security Checklist
 
 ### Development Phase
-- [ ] Use parameterized queries for all database operations
-- [ ] Implement comprehensive input validation
-- [ ] Use ORM frameworks where appropriate
-- [ ] Avoid dynamic query construction
-- [ ] Implement proper error handling
+-  Use parameterized queries for all database operations
+-  Implement comprehensive input validation
+-  Use ORM frameworks where appropriate
+-  Avoid dynamic query construction
+-  Implement proper error handling
 
 ### Testing Phase
-- [ ] Test all input fields for injection vulnerabilities
-- [ ] Use automated scanning tools
-- [ ] Perform manual penetration testing
-- [ ] Test with various payload types
-- [ ] Verify input validation effectiveness
+-  Test all input fields for injection vulnerabilities
+-  Use automated scanning tools
+-  Perform manual penetration testing
+-  Test with various payload types
+-  Verify input validation effectiveness
 
 ### Deployment Phase
-- [ ] Configure database with least privilege
-- [ ] Implement Web Application Firewall
-- [ ] Set up monitoring and alerting
-- [ ] Regular security assessments
-- [ ] Keep frameworks and libraries updated
+- Configure database with least privilege
+- Implement Web Application Firewall
+- Set up monitoring and alerting
+- Regular security assessments
+- Keep frameworks and libraries updated
 
 ## 🎓 Knowledge Check
 

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header"><h1>A07 – Identification & Authentication Failures</h1><p>Login requires only a username.</p></div>
+<div class="card"><div class="card__body">
+  {% if not logged %}
+  <form method="POST">
+    <label class="form-label">Username</label>
+    <input class="form-control" name="username" placeholder="admin">
+    <button class="btn btn--primary" style="margin-top:8px">Login</button>
+  </form>
+  {% else %}
+    <p class="status status--success">Logged in as <strong>{{ user }}</strong> with no password!</p>
+    <p>Impersonation possible by changing the username to <code>admin</code>.</p>
+  {% endif %}
+</div></div>
+{% endblock %}

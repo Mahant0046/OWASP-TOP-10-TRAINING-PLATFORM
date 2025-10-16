@@ -1,0 +1,1025 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module.title }} - Animation{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="content-header">
+        <div class="header-left">
+            <h1 class="page-title">
+                <i class="fas fa-play-circle"></i>
+                {{ module.title }} - Interactive Animation
+            </h1>
+            <p class="page-subtitle">Watch interactive animations to understand {{ module.title }} vulnerabilities</p>
+        </div>
+        <div class="header-right">
+            <div class="xp-indicator">
+                <i class="fas fa-star"></i>
+                <span>+25 XP upon completion</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-progress-container">
+        <div class="progress-steps">
+            <div class="step completed">
+                <div class="step-icon"><i class="fas fa-book"></i></div>
+                <div class="step-label">Documentation</div>
+                <div class="step-xp">50 XP</div>
+            </div>
+            <div class="step active">
+                <div class="step-icon"><i class="fas fa-play-circle"></i></div>
+                <div class="step-label">Animation</div>
+                <div class="step-xp">25 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-flask"></i></div>
+                <div class="step-label">Interactive Lab</div>
+                <div class="step-xp">75 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                <div class="step-label">Quiz</div>
+                <div class="step-xp">50 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-trophy"></i></div>
+                <div class="step-label">Badge</div>
+                <div class="step-xp">Complete</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OWASP Animation Dashboard -->
+    <div id="animation-dashboard" class="animation-dashboard">
+        <div class="dashboard-header">
+            <h2>🎬 OWASP Top 10 Interactive Animations</h2>
+            <p>Select a vulnerability to watch its interactive demonstration</p>
+            <div class="dashboard-stats">
+                <div class="stat">
+                    <span class="stat-number" id="animation-completed-count">0</span>
+                    <span class="stat-label">Completed</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">10</span>
+                    <span class="stat-label">Total</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="vulnerability-cards" class="vulnerability-grid">
+            <!-- Vulnerability cards will be populated by animations.js -->
+        </div>
+    </div>
+
+    <!-- OWASP Animation Player -->
+    <div id="animation-player" class="animation-player hidden">
+        <div class="player-header">
+            <div class="player-info">
+                <h2 id="current-vulnerability-title">Loading...</h2>
+                <div class="vulnerability-meta">
+                    <span id="difficulty-badge" class="difficulty-badge">Medium</span>
+                    <span class="time-estimate">⏱️ <span id="estimated-time">5 minutes</span></span>
+                    <span class="scene-counter">Scene <span id="current-scene">1</span> of <span id="total-scenes">5</span></span>
+                </div>
+            </div>
+            <div class="player-controls">
+                <button id="back-to-animation-dashboard" class="btn btn--outline">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
+        </div>
+
+        <div class="player-content">
+            <div class="scene-area">
+                <div id="scene-container" class="scene-container">
+                    <!-- Scene content will be rendered here -->
+                </div>
+                
+                <div class="scene-controls">
+                    <button id="prev-scene" class="control-btn">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <button id="play-btn" class="control-btn control-btn--primary">
+                        <i class="fas fa-play"></i> Play
+                    </button>
+                    <button id="pause-btn" class="control-btn control-btn--secondary" style="display: none;">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button id="next-scene" class="control-btn">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" data-tab="timeline">Timeline</button>
+                    <button class="panel-tab" data-tab="info">Info</button>
+                    <button class="panel-tab" data-tab="code">Code</button>
+                    <button class="panel-tab" data-tab="prevention">Prevention</button>
+                </div>
+
+                <div class="panel-content">
+                    <div id="timeline-panel" class="panel active">
+                        <div class="timeline-phases">
+                            <!-- Timeline will be populated by animations.js -->
+                        </div>
+                    </div>
+
+                    <div id="info-panel" class="panel">
+                        <div id="scene-narration" class="narration">
+                            <p>Scene narration will appear here...</p>
+                        </div>
+                        <div id="scene-info" class="scene-details">
+                            <h4>Scene Details</h4>
+                            <p>Additional information about the current scene.</p>
+                        </div>
+                    </div>
+
+                    <div id="code-panel" class="panel">
+                        <div class="code-tabs">
+                            <button class="code-tab active" data-code="vulnerable">Vulnerable Code</button>
+                            <button class="code-tab" data-code="secure">Secure Code</button>
+                        </div>
+                        <div class="code-content">
+                            <div id="vulnerable-code" class="code-block active">
+                                <pre><code>// Vulnerable code example will appear here</code></pre>
+                            </div>
+                            <div id="secure-code" class="code-block">
+                                <pre><code>// Secure code example will appear here</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="prevention-panel" class="panel">
+                        <h4>Prevention Techniques</h4>
+                        <div id="prevention-content">
+                            <!-- Prevention content will be populated by animations.js -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="animation-actions">
+        <div class="viewing-timer">
+            <i class="fas fa-clock"></i>
+            <span id="viewing-time">0:00</span>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="complete-animation-btn" class="btn btn-success" disabled>
+                <i class="fas fa-check"></i>
+                Mark as Complete (+25 XP)
+            </button>
+            <button id="go-to-lab" class="btn btn-primary" onclick="goToLab('{{ module.id }}')">
+                <i class="fas fa-arrow-right"></i>
+                Next: Interactive Lab
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-check-circle text-success"></i> Animation Completed!</h3>
+        </div>
+        <div class="modal-body">
+            <p>Great job! You've earned <strong>25 XP</strong> for watching the animation.</p>
+            <div class="xp-animation">
+                <span class="xp-earned">+25 XP</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="nextStep()">
+                <i class="fas fa-flask"></i>
+                Continue to Interactive Lab
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* OWASP Animation Platform Styles */
+.animation-dashboard {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.dashboard-header h2 {
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.dashboard-header p {
+    color: #666;
+    margin-bottom: 24px;
+}
+
+.dashboard-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.vulnerability-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.vulnerability-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.vulnerability-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.vulnerability-card.completed {
+    border-color: #28a745;
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05));
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.difficulty-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.difficulty-badge.critical {
+    background: #dc3545;
+    color: white;
+}
+
+.difficulty-badge.high {
+    background: #fd7e14;
+    color: white;
+}
+
+.difficulty-badge.medium {
+    background: #ffc107;
+    color: #333;
+}
+
+.card-description {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #888;
+}
+
+.animation-player {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+}
+
+.animation-player.hidden {
+    display: none;
+}
+
+.player-header {
+    background: linear-gradient(135deg, var(--color-primary), #764ba2);
+    color: white;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-info h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+}
+
+.vulnerability-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 14px;
+}
+
+.player-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0;
+    min-height: 500px;
+}
+
+.scene-area {
+    padding: 24px;
+    border-right: 1px solid #e9ecef;
+}
+
+.scene-container {
+    min-height: 400px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scene-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.control-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s;
+    font-size: 14px;
+}
+
+.control-btn:hover:not(:disabled) {
+    background: #0056b3;
+}
+
+.control-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.control-btn--primary {
+    background: #28a745;
+}
+
+.control-btn--primary:hover:not(:disabled) {
+    background: #1e7e34;
+}
+
+.control-btn--secondary {
+    background: #6c757d;
+}
+
+.control-btn--secondary:hover:not(:disabled) {
+    background: #545b62;
+}
+
+.info-panel {
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-tabs {
+    display: flex;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.panel-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 12px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.panel-tab.active {
+    background: white;
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.panel-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.panel {
+    display: none;
+    padding: 20px;
+    height: 100%;
+}
+
+.panel.active {
+    display: block;
+}
+
+.timeline-phases {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.timeline-phase {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.timeline-phase:hover {
+    border-color: var(--color-primary);
+}
+
+.timeline-phase.active {
+    border-color: var(--color-primary);
+    background: rgba(0, 123, 255, 0.1);
+}
+
+.phase-number {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.phase-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.phase-description {
+    font-size: 12px;
+    color: #666;
+}
+
+.code-tabs {
+    display: flex;
+    margin-bottom: 16px;
+}
+
+.code-tab {
+    background: #e9ecef;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 4px 4px 0 0;
+    margin-right: 4px;
+}
+
+.code-tab.active {
+    background: #333;
+    color: white;
+}
+
+.code-block {
+    display: none;
+    background: #1a1a1a;
+    color: #e5e5e5;
+    padding: 16px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    overflow-x: auto;
+}
+
+.code-block.active {
+    display: block;
+}
+
+.prevention-list {
+    list-style: none;
+    padding: 0;
+}
+
+.prevention-list li {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+.prevention-list li:before {
+    content: "✓";
+    color: #28a745;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Interactive Scene Styles */
+.interactive-scene {
+    width: 100%;
+    height: 100%;
+}
+
+.scene-title {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.scene-title h3 {
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.scene-title p {
+    color: #666;
+    font-size: 14px;
+}
+
+.browser-mockup {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.browser-bar {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.browser-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.browser-controls span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #dee2e6;
+}
+
+.browser-controls span:first-child {
+    background: #dc3545;
+}
+
+.browser-controls span:nth-child(2) {
+    background: #ffc107;
+}
+
+.browser-controls span:last-child {
+    background: #28a745;
+}
+
+.address-bar {
+    flex: 1;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+.browser-content {
+    padding: 20px;
+    min-height: 200px;
+}
+
+.code-highlight {
+    background: rgba(255, 193, 7, 0.3);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.terminal-mockup {
+    background: #1a1a1a;
+    color: #e5e5e5;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    margin: 16px 0;
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.fade-in.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes pulseRed {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+}
+
+@keyframes pulseGreen {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+    50% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+}
+
+.pulse-red {
+    animation: pulseRed 1.5s infinite;
+}
+
+.pulse-green {
+    animation: pulseGreen 2s infinite;
+}
+
+/* Animation ready state */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.ready-indicator {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.control-btn.ready {
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+
+@media (max-width: 768px) {
+    .player-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .scene-area {
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .vulnerability-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+let startTime = Date.now();
+let timerInterval;
+
+// Start viewing timer
+function startTimer() {
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        document.getElementById('viewing-time').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+// Complete animation
+async function completeAnimation() {
+    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+    
+    try {
+        const response = await fetch('/api/complete-animation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                module_id: '{{ module.id }}',
+                time_spent: timeSpent
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('success-modal').style.display = 'flex';
+            document.getElementById('complete-animation-btn').disabled = true;
+            document.getElementById('complete-animation-btn').innerHTML = 
+                '<i class="fas fa-check"></i> Completed';
+            clearInterval(timerInterval);
+        } else {
+            alert(result.error || 'Failed to complete animation');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while completing animation');
+    }
+}
+
+function nextStep() {
+    window.location.href = '/module/{{ module.id }}/lab';
+}
+
+// Navigation functions for proper flow
+function goToLab(moduleId) {
+    console.log('🧪 Navigating to lab for module:', moduleId);
+    
+    // Use the gamification integration if available
+    if (window.completeAnimationAndNext) {
+        window.completeAnimationAndNext(moduleId);
+    } else {
+        // Fallback direct navigation
+        window.location.href = `/module/${moduleId}/lab`;
+    }
+}
+
+// Auto-enable lab button when animation is viewed
+function enableLabNavigation() {
+    const labBtn = document.getElementById('go-to-lab');
+    if (labBtn) {
+        labBtn.disabled = false;
+        labBtn.style.opacity = '1';
+    }
+}
+
+// Track animation progress and enable next steps
+function trackAnimationProgress() {
+    // Check if appState is available
+    if (!window.appState) {
+        console.log('⚠️ appState not available yet, skipping progress tracking');
+        return;
+    }
+    
+    const totalScenes = window.appState.currentVulnerability ? window.appState.currentVulnerability.scenes.length : 5;
+    const progress = ((window.appState.currentScene + 1) / totalScenes) * 100;
+    
+    console.log(`📊 Animation progress: ${Math.round(progress)}% (Scene ${window.appState.currentScene + 1}/${totalScenes})`);
+    
+    // Enable completion button when 80% through
+    if (progress >= 80) {
+        const completeBtn = document.getElementById('complete-animation-btn');
+        if (completeBtn) {
+            completeBtn.disabled = false;
+            console.log('✅ Completion button enabled');
+        }
+    }
+    
+    // Enable lab navigation when 50% through
+    if (progress >= 50) {
+        enableLabNavigation();
+        console.log('✅ Lab navigation enabled');
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎬 Animation module loaded for: {{ module.id }}');
+    startTimer();
+    
+    // Complete button
+    const completeBtn = document.getElementById('complete-animation-btn');
+    if (completeBtn) {
+        completeBtn.addEventListener('click', completeAnimation);
+    }
+    
+    // Close modal when clicking outside
+    const modal = document.getElementById('success-modal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+    }
+    
+    // Initialize the animation platform with better error handling
+    function initializeAnimations() {
+        console.log('🚀 Initializing OWASP Animation Platform...');
+        
+        // Check if animations.js is loaded
+        if (!window.initAnimationPlatform) {
+            console.error('❌ Animation platform not available - animations.js may not be loaded');
+            showAnimationError('Animation system not loaded. Please refresh the page.');
+            return;
+        }
+        
+        // Check if required DOM elements exist
+        const dashboard = document.getElementById('animation-dashboard');
+        const player = document.getElementById('animation-player');
+        const sceneContainer = document.getElementById('scene-container');
+        
+        if (!dashboard || !player || !sceneContainer) {
+            console.error('❌ Required DOM elements missing:', {
+                dashboard: !!dashboard,
+                player: !!player,
+                sceneContainer: !!sceneContainer
+            });
+            showAnimationError('Animation interface elements missing. Please refresh the page.');
+            return;
+        }
+        
+        try {
+            // Initialize the platform
+            window.initAnimationPlatform();
+            console.log('✅ Animation platform initialized');
+            
+            // Auto-select vulnerability based on module ID after initialization
+            const moduleId = '{{ module.id }}';
+            if (moduleId && window.selectVulnerability) {
+                const vulnId = moduleId;
+                console.log('🎯 Auto-selecting vulnerability:', vulnId);
+                
+                // Delay to ensure everything is initialized
+                setTimeout(() => {
+                    try {
+                        console.log('🎬 Starting auto-selection...');
+                        window.selectVulnerability(vulnId);
+                        
+                        // Verify selection worked
+                        setTimeout(() => {
+                            if (window.appState && window.appState.currentVulnerability) {
+                                console.log('✅ Vulnerability selected:', window.appState.currentVulnerability.title);
+                                console.log('🎮 Animation ready - click play button to start');
+                                
+                                // Show ready message instead of auto-starting
+                                showAnimationReady();
+                            } else {
+                                console.error('❌ Vulnerability selection failed');
+                                showAnimationError('Failed to load animation content. Please try selecting a different module.');
+                            }
+                        }, 500);
+                    } catch (error) {
+                        console.error('❌ Error during vulnerability selection:', error);
+                        showAnimationError('Error loading animation. Please refresh and try again.');
+                    }
+                }, 1000);
+            } else {
+                console.error('❌ selectVulnerability not available or no module ID');
+                showAnimationError('Animation selection not available. Please refresh the page.');
+            }
+        } catch (error) {
+            console.error('❌ Error initializing animation platform:', error);
+            showAnimationError('Failed to initialize animation system. Please refresh the page.');
+        }
+    }
+    
+    function showAnimationError(message) {
+        const dashboard = document.getElementById('animation-dashboard');
+        if (dashboard) {
+            dashboard.innerHTML = `
+                <div class="dashboard-header">
+                    <h2>🎬 Animation System Error</h2>
+                    <div class="error-message" style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; margin: 20px 0; color: #721c24;">
+                        <h4>⚠️ Animation Not Available</h4>
+                        <p>${message}</p>
+                        <button onclick="location.reload()" class="btn btn--primary" style="margin-top: 10px;">
+                            <i class="fas fa-refresh"></i> Refresh Page
+                        </button>
+                        <button onclick="window.location.href='/module/{{ module.id }}/lab'" class="btn btn--outline" style="margin-top: 10px; margin-left: 10px;">
+                            <i class="fas fa-arrow-right"></i> Skip to Lab
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    function showAnimationReady() {
+        // Show a ready message and highlight the play button
+        const playButton = document.getElementById('play-btn');
+        if (playButton) {
+            playButton.style.background = '#28a745';
+            playButton.style.animation = 'pulse 2s infinite';
+            playButton.innerHTML = '<i class="fas fa-play"></i> Click to Start Animation';
+        }
+        
+        // Show ready notification
+        if (window.showNotification) {
+            window.showNotification('🎬 Animation ready! Click the play button to start.', 'success');
+        }
+        
+        // Add ready indicator to dashboard if still visible
+        const dashboard = document.getElementById('animation-dashboard');
+        if (dashboard && dashboard.style.display !== 'none') {
+            const readyIndicator = document.createElement('div');
+            readyIndicator.className = 'ready-indicator';
+            readyIndicator.style.cssText = 'background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 15px; margin: 15px 0; color: #155724; text-align: center;';
+            readyIndicator.innerHTML = `
+                <h4>✅ Animation Ready!</h4>
+                <p>{{ module.title }} animation is loaded and ready to play.</p>
+                <p><strong>Click the play button in the animation player to start.</strong></p>
+            `;
+            dashboard.appendChild(readyIndicator);
+        }
+    }
+    
+    
+    // Add backup event listener for play button
+    function setupPlayButtonListener() {
+        const playBtn = document.getElementById('play-btn');
+        if (playBtn) {
+            // Remove any existing listeners
+            playBtn.replaceWith(playBtn.cloneNode(true));
+            const newPlayBtn = document.getElementById('play-btn');
+            
+            newPlayBtn.addEventListener('click', function() {
+                console.log('🎮 Play button clicked!');
+                
+                if (window.playAnimation && typeof window.playAnimation === 'function') {
+                    if (window.appState && window.appState.currentVulnerability) {
+                        console.log('🎬 Starting animation...');
+                        window.playAnimation();
+                    } else {
+                        console.error('❌ No vulnerability selected');
+                        alert('No animation loaded. Click "Load Animation" first.');
+                    }
+                } else {
+                    console.error('❌ playAnimation function not available');
+                    alert('Animation system not ready. Please refresh the page.');
+                }
+            });
+            
+            console.log('✅ Play button listener attached');
+        } else {
+            console.error('❌ Play button not found');
+        }
+    }
+    
+    // Set up play button listener after a delay to ensure DOM is ready
+    setTimeout(setupPlayButtonListener, 2000);
+    
+    // Start initialization
+    initializeAnimations();
+});
+</script>
+{% endblock %}

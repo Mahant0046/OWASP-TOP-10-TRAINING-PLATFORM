@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header"><h1>A08 – Software & Data Integrity Failures</h1><p>Unsigned “plugin” JSON is trusted.</p></div>
+<div class="card"><div class="card__body">
+  <form method="POST">
+    <label class="form-label">Plugin JSON</label>
+    <textarea class="form-control" name="plugin" rows="6">{ "banner": "Hello from untrusted plugin", "grant_xp": true }</textarea>
+    <button class="btn btn--primary" style="margin-top:8px">Install</button>
+  </form>
+  <p class="mt-8"><strong>Banner:</strong> {{ banner }}</p>
+  {% if result %}<p class="status status--success" style="margin-top:12px">{{ result }}</p>{% endif %}
+</div></div>
+{% endblock %}

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if module_info %}{{ module_info.title }} - {% endif %}OWASP Documentation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <style>
+        :root {
+            --doc-bg: #ffffff;
+            --doc-text: #2d3748;
+            --doc-text-light: #4a5568;
+            --doc-border: #e2e8f0;
+            --doc-accent: #667eea;
+            --doc-accent-light: #764ba2;
+            --doc-code-bg: #f7fafc;
+            --doc-sidebar-bg: #f8fafc;
+            --doc-highlight: #fef5e7;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--doc-text);
+            background: var(--doc-bg);
+            margin: 0;
+            padding: 0;
+        }
+
+        .doc-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+        }
+
+        /* Sidebar */
+        .doc-sidebar {
+            background: var(--doc-sidebar-bg);
+            border-right: 1px solid var(--doc-border);
+            padding: 24px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--doc-accent) transparent;
+        }
+
+        .doc-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .doc-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .doc-sidebar::-webkit-scrollbar-thumb {
+            background: var(--doc-accent);
+            border-radius: 3px;
+        }
+
+        .doc-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--doc-border);
+        }
+
+        .doc-module-badge {
+            background: linear-gradient(135deg, var(--doc-accent), var(--doc-accent-light));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .doc-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: var(--doc-text);
+            line-height: 1.3;
+        }
+
+        .doc-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--doc-text-light);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-item i {
+            width: 16px;
+            color: var(--doc-accent);
+        }
+
+        /* Progress Tracking */
+        .reading-progress {
+            background: white;
+            border: 1px solid var(--doc-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .progress-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .progress-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--doc-text);
+        }
+
+        .progress-percentage {
+            font-size: 0.8rem;
+            color: var(--doc-accent);
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--doc-border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--doc-accent), var(--doc-accent-light));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .reading-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--doc-text-light);
+        }
+
+        /* Table of Contents */
+        .toc-section {
+            margin-bottom: 24px;
+        }
+
+        .toc-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--doc-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc li {
+            margin-bottom: 4px;
+        }
+
+        .toc a {
+            color: var(--doc-text-light);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: block;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .toc a:hover,
+        .toc a.active {
+            background: white;
+            color: var(--doc-accent);
+            border-left-color: var(--doc-accent);
+            transform: translateX(4px);
+        }
+
+        /* Navigation */
+        .doc-nav {
+            margin-top: auto;
+            padding-top: 24px;
+            border-top: 1px solid var(--doc-border);
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: white;
+            border: 1px solid var(--doc-border);
+            border-radius: 8px;
+            color: var(--doc-text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+
+        .nav-button:hover {
+            background: var(--doc-accent);
+            color: white;
+            border-color: var(--doc-accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Main Content */
+        .doc-content {
+            padding: 40px 48px;
+            max-width: none;
+            background: var(--doc-bg);
+        }
+
+        .doc-content h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 24px 0;
+            color: var(--doc-text);
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--doc-accent), var(--doc-accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-content h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 32px 0 16px 0;
+            color: var(--doc-text);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--doc-border);
+        }
+
+        .doc-content h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 24px 0 12px 0;
+            color: var(--doc-text);
+        }
+
+        .doc-content h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+            color: var(--doc-text);
+        }
+
+        .doc-content p {
+            margin: 16px 0;
+            line-height: 1.7;
+            color: var(--doc-text);
+        }
+
+        .doc-content ul, .doc-content ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .doc-content li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .doc-content blockquote {
+            margin: 24px 0;
+            padding: 16px 20px;
+            background: var(--doc-highlight);
+            border-left: 4px solid var(--doc-accent);
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        .doc-content code {
+            background: var(--doc-code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--doc-accent);
+            border: 1px solid var(--doc-border);
+        }
+
+        .doc-content pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid var(--doc-border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .doc-content pre code {
+            background: none;
+            padding: 0;
+            border: none;
+            color: inherit;
+        }
+
+        .doc-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .doc-content th,
+        .doc-content td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--doc-border);
+        }
+
+        .doc-content th {
+            background: var(--doc-sidebar-bg);
+            font-weight: 600;
+            color: var(--doc-text);
+        }
+
+        .doc-content tr:hover {
+            background: var(--doc-sidebar-bg);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--doc-accent), var(--doc-accent-light));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: translateY(-2px) scale(1.1);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        /* XP Notification */
+        .xp-notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+            font-weight: 600;
+        }
+
+        .xp-notification.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .doc-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .doc-sidebar {
+                display: none;
+            }
+            
+            .doc-content {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .doc-content {
+                padding: 16px;
+            }
+            
+            .doc-content h1 {
+                font-size: 2rem;
+            }
+            
+            .fab {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        /* Scroll to top animation */
+        .scroll-to-top {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Reading highlight animation */
+        .reading-highlight {
+            background: linear-gradient(90deg, transparent, var(--doc-highlight), transparent);
+            animation: reading-sweep 2s ease-in-out;
+        }
+
+        @keyframes reading-sweep {
+            0% { background-position: -100% 0; }
+            100% { background-position: 100% 0; }
+        }
+    </style>
+</head>
+<body data-user-logged-in="{{ 'true' if user else 'false' }}">
+    <div class="doc-container">
+        <!-- Sidebar -->
+        <aside class="doc-sidebar">
+            <!-- Document Header -->
+            <div class="doc-header">
+                {% if module_info %}
+                <div class="doc-module-badge">{{ module_info.id }}</div>
+                <h1 class="doc-title">{{ module_info.title }}</h1>
+                {% else %}
+                <h1 class="doc-title">Documentation</h1>
+                {% endif %}
+                
+                <div class="doc-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>{{ filename }}</span>
+                    </div>
+                    {% if module_info %}
+                    <div class="meta-item">
+                        <i class="fas fa-signal"></i>
+                        <span>{{ module_info.difficulty|title }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-star"></i>
+                        <span>{{ module_info.points }} XP</span>
+                    </div>
+                    {% endif %}
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span id="estimated-time">~15 min read</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reading Progress -->
+            {% if user %}
+            <div class="reading-progress">
+                <div class="progress-header">
+                    <span class="progress-title">Reading Progress</span>
+                    <span class="progress-percentage" id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="reading-stats">
+                    <div>Time: <span id="reading-time">0:00</span></div>
+                    <div>XP: <span id="potential-xp">50</span></div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Table of Contents -->
+            {% if toc %}
+            <div class="toc-section">
+                <h3 class="toc-title">
+                    <i class="fas fa-list"></i>
+                    Table of Contents
+                </h3>
+                <div class="toc">
+                    {{ toc|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Navigation -->
+            <div class="doc-nav">
+                <a href="{{ url_for('home') }}#documentation" class="nav-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Documentation
+                </a>
+                {% if user %}
+                <a href="{{ url_for('home') }}" class="nav-button">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="doc-content" id="doc-content">
+            {{ content|safe }}
+            
+            <!-- Learning Flow Navigation -->
+            <div class="learning-flow-nav" style="margin-top: 40px; padding-top: 30px; border-top: 2px solid var(--doc-border);">
+                <div style="text-align: center;">
+                    <h3 style="color: var(--color-primary); margin-bottom: 20px;">
+                        <i class="fas fa-graduation-cap"></i> Ready for the Next Step?
+                    </h3>
+                    <p style="margin-bottom: 25px; color: var(--doc-text);">
+                        You've completed the documentation. Continue your learning journey with the interactive animation!
+                    </p>
+                    <button id="continue-to-animation" 
+                            data-module-id="{{ module_id if filename else 'A01' }}"
+                            class="btn btn--primary btn--large" 
+                            style="padding: 15px 30px; font-size: 16px; border-radius: 8px;">
+                        <i class="fas fa-play-circle"></i> Continue to Animation (+50 XP)
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab scroll-to-top" id="scroll-to-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- XP Notification -->
+    <div class="xp-notification" id="xp-notification">
+        <i class="fas fa-star"></i> +<span id="xp-amount">50</span> XP - Documentation Read!
+    </div>
+
+    <script>
+        // Reading progress tracking
+        let startTime = Date.now();
+        let readingTime = 0;
+        let maxScroll = 0;
+        let hasAwarded = false;
+
+        // Update reading time
+        function updateReadingTime() {
+            readingTime = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(readingTime / 60);
+            const seconds = readingTime % 60;
+            document.getElementById('reading-time').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update reading progress
+        function updateProgress() {
+            const content = document.getElementById('doc-content');
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = Math.min(100, (scrollTop / scrollHeight) * 100);
+            
+            // Track maximum scroll position
+            maxScroll = Math.max(maxScroll, progress);
+            
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-percent').textContent = `${Math.round(progress)}%`;
+            
+            // Update potential XP based on progress and time
+            let potentialXP = 50; // Base XP
+            if (readingTime > 300) potentialXP += 10; // 5+ minutes
+            if (readingTime > 600) potentialXP += 15; // 10+ minutes
+            if (progress >= 80) potentialXP += 25; // 80%+ completion
+            
+            document.getElementById('potential-xp').textContent = potentialXP;
+            
+            // Award XP when user has read 80% and spent reasonable time
+            const isUserLoggedIn = document.body.dataset.userLoggedIn === 'true';
+            if (progress >= 80 && readingTime >= 120 && !hasAwarded && isUserLoggedIn) {
+                awardReadingXP();
+            }
+        }
+
+        // Award XP for reading
+        async function awardReadingXP() {
+            if (hasAwarded) return;
+            hasAwarded = true;
+            
+            const data = {
+                module_id: '{{ module_id }}',
+                reading_time: readingTime,
+                completion: maxScroll
+            };
+            
+            try {
+                const response = await fetch('/api/track-doc-reading', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success && result.xp_earned > 0) {
+                    showXPNotification(result.xp_earned);
+                }
+            } catch (error) {
+                console.error('Error tracking reading progress:', error);
+            }
+        }
+
+        // Show XP notification
+        function showXPNotification(xp) {
+            const notification = document.getElementById('xp-notification');
+            document.getElementById('xp-amount').textContent = xp;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Handle scroll events
+        function handleScroll() {
+            updateProgress();
+            
+            // Show/hide scroll to top button
+            const scrollButton = document.getElementById('scroll-to-top');
+            if (window.pageYOffset > 300) {
+                scrollButton.classList.add('visible');
+            } else {
+                scrollButton.classList.remove('visible');
+            }
+            
+            // Update active TOC item
+            updateActiveTOCItem();
+        }
+
+        // Update active table of contents item
+        function updateActiveTOCItem() {
+            const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            const tocLinks = document.querySelectorAll('.toc a');
+            
+            let activeHeading = null;
+            const scrollPos = window.pageYOffset + 100;
+            
+            headings.forEach(heading => {
+                if (heading.offsetTop <= scrollPos) {
+                    activeHeading = heading;
+                }
+            });
+            
+            // Remove active class from all TOC links
+            tocLinks.forEach(link => link.classList.remove('active'));
+            
+            // Add active class to current section
+            if (activeHeading && activeHeading.id) {
+                const activeLink = document.querySelector(`.toc a[href="#${activeHeading.id}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+        }
+
+        // Estimate reading time
+        function estimateReadingTime() {
+            const content = document.getElementById('doc-content');
+            const text = content.textContent || content.innerText || '';
+            const wordsPerMinute = 200;
+            const words = text.trim().split(/\s+/).length;
+            const minutes = Math.ceil(words / wordsPerMinute);
+            
+            document.getElementById('estimated-time').textContent = `~${minutes} min read`;
+        }
+
+        // Smooth scrolling for TOC links
+        function setupSmoothScrolling() {
+            const tocLinks = document.querySelectorAll('.toc a[href^="#"]');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Initialize syntax highlighting
+        function initSyntaxHighlighting() {
+            hljs.highlightAll();
+        }
+
+        // Initialize the page
+        function initDocViewer() {
+            estimateReadingTime();
+            setupSmoothScrolling();
+            initSyntaxHighlighting();
+            
+            // Start tracking reading time
+            setInterval(updateReadingTime, 1000);
+            
+            // Add scroll listener
+            window.addEventListener('scroll', handleScroll);
+            
+            // Initial progress update
+            updateProgress();
+            
+            // Add reading highlight effect to paragraphs on hover
+            const paragraphs = document.querySelectorAll('.doc-content p');
+            paragraphs.forEach(p => {
+                p.addEventListener('mouseenter', () => {
+                    p.classList.add('reading-highlight');
+                });
+                p.addEventListener('animationend', () => {
+                    p.classList.remove('reading-highlight');
+                });
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initDocViewer();
+            
+            // Add event listener for continue button
+            const continueBtn = document.getElementById('continue-to-animation');
+            if (continueBtn) {
+                continueBtn.addEventListener('click', function() {
+                    const moduleId = this.dataset.moduleId;
+                    if (window.completeDocumentationAndNext) {
+                        window.completeDocumentationAndNext(moduleId);
+                    } else {
+                        // Fallback: direct navigation
+                        console.log('Completing documentation and navigating to animation for:', moduleId);
+                        window.location.href = `/module/${moduleId}/animation`;
+                    }
+                });
+            }
+        });
+
+        // Track page visibility for accurate reading time
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Page is hidden, pause reading time tracking
+                startTime = Date.now() - (readingTime * 1000);
+            } else {
+                // Page is visible, resume reading time tracking
+                startTime = Date.now() - (readingTime * 1000);
+            }
+        });
+    </script>
+</body>
+</html>

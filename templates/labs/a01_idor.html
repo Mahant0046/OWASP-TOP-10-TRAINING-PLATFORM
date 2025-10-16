@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header"><h1>A01 – Broken Access Control (IDOR)</h1><p>Try viewing someone else’s profile by changing the <code>?id=</code> value.</p></div>
+<div class="card"><div class="card__body">
+  <p><strong>Your profile id:</strong> {{ my_id }}</p>
+  <p><strong>Viewing id:</strong> {{ profile.id }}</p>
+  <ul>
+    <li>Name: {{ profile.name }}</li>
+    <li>Email: {{ profile.email }}</li>
+    <li>Salary: {{ profile.salary }}</li>
+  </ul>
+  <form method="GET" class="form" style="margin-top:12px">
+    <label class="form-label">Profile ID</label>
+    <input class="form-control" name="id" value="{{ profile.id }}">
+    <button class="btn btn--primary" style="margin-top:8px">View</button>
+  </form>
+  {% if note %}<p class="status status--success" style="margin-top:12px">{{ note }}</p>{% endif %}
+</div></div>
+{% endblock %}

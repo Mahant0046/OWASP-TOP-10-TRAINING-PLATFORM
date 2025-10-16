@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}OWASP Top 10 Security Training Platform{% endblock %}</title>
+
+  <!-- ✅ Correct static path -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <!-- vendor assets -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="auth-container">
+    <!-- Simple Header -->
+    <header class="auth-header">
+      <div class="auth-header-content">
+        <a href="{{ url_for('landing') }}" class="auth-logo">
+          <i class="fas fa-shield-alt"></i>
+          <span>OWASP Training</span>
+        </a>
+        <div class="auth-nav">
+          {% if request.endpoint == 'login' %}
+            <span class="auth-text">Don't have an account?</span>
+            <a href="{{ url_for('signup') }}" class="btn btn--outline btn--sm">Sign Up</a>
+          {% elif request.endpoint == 'signup' %}
+            <span class="auth-text">Already have an account?</span>
+            <a href="{{ url_for('login') }}" class="btn btn--outline btn--sm">Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="auth-main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-wrap">
+            {% for cat, msg in messages %}
+              <div class="status status--{{ 'success' if cat=='ok' else ('warning' if cat=='warn' else 'error') }}" style="margin-bottom:12px">{{ msg }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="auth-footer">
+      <p>&copy; 2025 OWASP Training Platform. Built for educational purposes.</p>
+    </footer>
+  </div>
+
+  {% block modals %}{% endblock %}
+</body>
+</html>

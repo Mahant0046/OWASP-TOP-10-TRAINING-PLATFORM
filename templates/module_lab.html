@@ -1,0 +1,976 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module.title }} - Interactive Lab{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="content-header">
+        <div class="header-left">
+            <h1 class="page-title">
+                <i class="fas fa-flask"></i>
+                {{ module.title }} - Interactive Lab
+            </h1>
+            <p class="page-subtitle">Practice exploiting and defending against {{ module.title }} vulnerabilities</p>
+        </div>
+        <div class="header-right">
+            <div class="xp-indicator">
+                <i class="fas fa-star"></i>
+                <span>+75 XP upon completion</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-progress-container">
+        <div class="progress-steps">
+            <div class="step completed">
+                <div class="step-icon"><i class="fas fa-book"></i></div>
+                <div class="step-label">Documentation</div>
+                <div class="step-xp">50 XP</div>
+            </div>
+            <div class="step completed">
+                <div class="step-icon"><i class="fas fa-play-circle"></i></div>
+                <div class="step-label">Animation</div>
+                <div class="step-xp">25 XP</div>
+            </div>
+            <div class="step active">
+                <div class="step-icon"><i class="fas fa-flask"></i></div>
+                <div class="step-label">Interactive Lab</div>
+                <div class="step-xp">75 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                <div class="step-label">Quiz</div>
+                <div class="step-xp">50 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-trophy"></i></div>
+                <div class="step-label">Badge</div>
+                <div class="step-xp">Complete</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lab-container">
+        <div class="lab-sidebar">
+            <div class="lab-info">
+                <h4>Lab Information</h4>
+                <div class="info-item">
+                    <i class="fas fa-target"></i>
+                    <span>{{ module.title }}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-signal"></i>
+                    <span>{{ module.difficulty }}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-star"></i>
+                    <span>75 XP reward</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="lab-timer">0:00</span>
+                </div>
+            </div>
+            
+            <div class="lab-objectives">
+                <h4>Objectives</h4>
+                <div class="objective-list">
+                    <div class="objective" id="obj-1">
+                        <i class="fas fa-circle"></i>
+                        <span>Identify the vulnerability</span>
+                    </div>
+                    <div class="objective" id="obj-2">
+                        <i class="fas fa-circle"></i>
+                        <span>Exploit the weakness</span>
+                    </div>
+                    <div class="objective" id="obj-3">
+                        <i class="fas fa-circle"></i>
+                        <span>Understand the impact</span>
+                    </div>
+                    <div class="objective" id="obj-4">
+                        <i class="fas fa-circle"></i>
+                        <span>Learn prevention methods</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lab-hints">
+                <h4>Hints</h4>
+                <div class="hint-container">
+                    <button class="hint-btn" onclick="showHint(1)">
+                        <i class="fas fa-lightbulb"></i>
+                        Hint 1
+                    </button>
+                    <button class="hint-btn" onclick="showHint(2)">
+                        <i class="fas fa-lightbulb"></i>
+                        Hint 2
+                    </button>
+                    <button class="hint-btn" onclick="showHint(3)">
+                        <i class="fas fa-lightbulb"></i>
+                        Hint 3
+                    </button>
+                </div>
+                <div id="hint-display" class="hint-display" style="display: none;">
+                    <p id="hint-text"></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="lab-main">
+            <div class="lab-environment">
+                <div class="environment-header">
+                    <h3>{{ module.title }} Lab Environment</h3>
+                    <div class="environment-status">
+                        <span class="status-indicator active"></span>
+                        <span>Environment Ready</span>
+                    </div>
+                </div>
+                
+                <div class="lab-content">
+                    <div class="scenario-description">
+                        <h4>Scenario</h4>
+                        <p>You are a security researcher testing a web application for {{ module.title }} vulnerabilities. 
+                        Your goal is to identify, exploit, and understand how to prevent these security issues.</p>
+                        
+                        <div class="scenario-details">
+                            <div class="detail-card">
+                                <i class="fas fa-globe"></i>
+                                <h5>Target Application</h5>
+                                <p>Vulnerable web application with {{ module.title }} issues</p>
+                            </div>
+                            <div class="detail-card">
+                                <i class="fas fa-user-secret"></i>
+                                <h5>Your Role</h5>
+                                <p>Ethical hacker / Security researcher</p>
+                            </div>
+                            <div class="detail-card">
+                                <i class="fas fa-bullseye"></i>
+                                <h5>Objective</h5>
+                                <p>Find and exploit the vulnerability safely</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lab-interface">
+                        <div class="interface-tabs">
+                            <button class="tab-btn active" onclick="switchTab('browser')">
+                                <i class="fas fa-globe"></i>
+                                Browser
+                            </button>
+                            <button class="tab-btn" onclick="switchTab('terminal')">
+                                <i class="fas fa-terminal"></i>
+                                Terminal
+                            </button>
+                            <button class="tab-btn" onclick="switchTab('tools')">
+                                <i class="fas fa-tools"></i>
+                                Tools
+                            </button>
+                        </div>
+                        
+                        <div class="tab-content">
+                            <div id="browser-tab" class="tab-pane active">
+                                <div class="browser-simulator">
+                                    <div class="browser-header">
+                                        <div class="browser-controls">
+                                            <span class="control red"></span>
+                                            <span class="control yellow"></span>
+                                            <span class="control green"></span>
+                                        </div>
+                                        <div class="address-bar">
+                                            <input type="text" value="http://vulnerable-app.local/{{ module.id.lower() }}" readonly>
+                                            <button class="go-btn">Go</button>
+                                        </div>
+                                    </div>
+                                    <div class="browser-content">
+                                        <div class="app-placeholder">
+                                            <h3>Vulnerable Application</h3>
+                                            <p>This is a simulated vulnerable application for {{ module.title }} testing.</p>
+                                            <div class="app-features">
+                                                <button class="feature-btn" onclick="startExploit()">
+                                                    <i class="fas fa-play"></i>
+                                                    Start Exploitation
+                                                </button>
+                                                <button class="feature-btn" onclick="viewSource()">
+                                                    <i class="fas fa-code"></i>
+                                                    View Source
+                                                </button>
+                                                <button class="feature-btn" onclick="runScan()">
+                                                    <i class="fas fa-search"></i>
+                                                    Security Scan
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="terminal-tab" class="tab-pane">
+                                <div class="terminal-simulator">
+                                    <div class="terminal-header">
+                                        <span>Terminal - Security Tools</span>
+                                    </div>
+                                    <div class="terminal-content">
+                                        <div id="terminal-output">
+                                            <div class="terminal-line">
+                                                <span class="prompt">researcher@lab:~$</span>
+                                                <span class="command">Welcome to the {{ module.title }} lab environment</span>
+                                            </div>
+                                            <div class="terminal-line">
+                                                <span class="prompt">researcher@lab:~$</span>
+                                                <span class="command">Type 'help' for available commands</span>
+                                            </div>
+                                        </div>
+                                        <div class="terminal-input">
+                                            <span class="prompt">researcher@lab:~$</span>
+                                            <input type="text" id="terminal-cmd" placeholder="Enter command...">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="tools-tab" class="tab-pane">
+                                <div class="tools-panel">
+                                    <h4>Security Testing Tools</h4>
+                                    <div class="tools-grid">
+                                        <div class="tool-card">
+                                            <i class="fas fa-bug"></i>
+                                            <h5>Vulnerability Scanner</h5>
+                                            <button class="tool-btn" onclick="runTool('scanner')">Run Scan</button>
+                                        </div>
+                                        <div class="tool-card">
+                                            <i class="fas fa-network-wired"></i>
+                                            <h5>Network Analyzer</h5>
+                                            <button class="tool-btn" onclick="runTool('network')">Analyze</button>
+                                        </div>
+                                        <div class="tool-card">
+                                            <i class="fas fa-code"></i>
+                                            <h5>Code Inspector</h5>
+                                            <button class="tool-btn" onclick="runTool('code')">Inspect</button>
+                                        </div>
+                                        <div class="tool-card">
+                                            <i class="fas fa-shield-alt"></i>
+                                            <h5>Security Validator</h5>
+                                            <button class="tool-btn" onclick="runTool('validator')">Validate</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lab-actions">
+                <div class="progress-indicator">
+                    <span>Lab Progress: </span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="lab-progress"></div>
+                    </div>
+                    <span id="progress-percentage">0%</span>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="reset-lab" class="btn btn-outline">
+                        <i class="fas fa-redo"></i>
+                        Reset Lab
+                    </button>
+                    <button id="mark-complete" class="btn btn-success">
+                        <i class="fas fa-check-circle"></i>
+                        Mark as Complete & Go to Assessment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-check-circle text-success"></i> Lab Completed!</h3>
+        </div>
+        <div class="modal-body">
+            <p>Excellent work! You've successfully completed the {{ module.title }} lab and earned <strong>75 XP</strong>.</p>
+            <div class="completion-summary">
+                <div class="summary-item">
+                    <i class="fas fa-target"></i>
+                    <span>Vulnerability identified and exploited</span>
+                </div>
+                <div class="summary-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Prevention methods understood</span>
+                </div>
+                <div class="summary-item">
+                    <i class="fas fa-star"></i>
+                    <span>75 XP earned</span>
+                </div>
+            </div>
+            <div class="xp-animation">
+                <span class="xp-earned">+75 XP</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="nextStep()">
+                <i class="fas fa-clipboard-check"></i>
+                Continue to Quiz
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.lab-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.lab-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.lab-info,
+.lab-objectives,
+.lab-hints {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.lab-main {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.lab-environment {
+    padding: 24px;
+}
+
+.environment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.environment-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #28a745;
+    font-weight: 500;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #28a745;
+    animation: pulse 2s infinite;
+}
+
+.scenario-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.detail-card {
+    padding: 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.detail-card i {
+    font-size: 24px;
+    color: #007bff;
+    margin-bottom: 8px;
+}
+
+.detail-card h5 {
+    margin: 0 0 8px 0;
+    color: #333;
+}
+
+.detail-card p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.lab-interface {
+    margin-top: 24px;
+}
+
+.interface-tabs {
+    display: flex;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+}
+
+.tab-pane {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.browser-simulator {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.browser-header {
+    background: #f8f9fa;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.browser-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.control.red { background: #ff5f56; }
+.control.yellow { background: #ffbd2e; }
+.control.green { background: #27ca3f; }
+
+.address-bar {
+    flex: 1;
+    display: flex;
+    gap: 8px;
+}
+
+.address-bar input {
+    flex: 1;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.go-btn {
+    padding: 6px 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.browser-content {
+    padding: 40px;
+    min-height: 300px;
+    background: white;
+}
+
+.app-placeholder {
+    text-align: center;
+}
+
+.app-features {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.feature-btn {
+    padding: 10px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s;
+}
+
+.feature-btn:hover {
+    background: #0056b3;
+}
+
+.terminal-simulator {
+    background: #1a1a1a;
+    color: #00ff00;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+}
+
+.terminal-header {
+    background: #333;
+    padding: 8px 16px;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.terminal-content {
+    padding: 16px;
+    min-height: 300px;
+}
+
+.terminal-line {
+    margin-bottom: 4px;
+}
+
+.prompt {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.command {
+    color: #fff;
+}
+
+.terminal-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.terminal-input input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    outline: none;
+    font-family: inherit;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.tool-card {
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.tool-card i {
+    font-size: 32px;
+    color: #007bff;
+    margin-bottom: 12px;
+}
+
+.tool-card h5 {
+    margin: 0 0 12px 0;
+    color: #333;
+}
+
+.tool-btn {
+    padding: 8px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.tool-btn:hover {
+    background: #0056b3;
+}
+
+.objective {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    color: #666;
+}
+
+.objective.completed {
+    color: #28a745;
+}
+
+.objective.completed i {
+    color: #28a745;
+}
+
+.hint-btn {
+    width: 100%;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s;
+}
+
+.hint-btn:hover {
+    background: #e9ecef;
+}
+
+.hint-display {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+.lab-actions {
+    background: #f8f9fa;
+    padding: 20px 24px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.completion-summary {
+    margin: 20px 0;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    color: #28a745;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@media (max-width: 768px) {
+    .lab-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .scenario-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .app-features {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .lab-actions {
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+</style>
+
+<script>
+let startTime = Date.now();
+let timerInterval;
+let labProgress = 0;
+let completedObjectives = 0;
+
+const hints = {
+    1: "Look for input fields that might not be properly validated.",
+    2: "Try different types of malicious input to see how the application responds.",
+    3: "Check the application's response headers and error messages for clues."
+};
+
+// Start lab timer
+function startTimer() {
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        document.getElementById('lab-timer').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+// Switch between tabs
+function switchTab(tabName) {
+    // Remove active class from all tabs and panes
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    
+    // Add active class to selected tab and pane
+    event.target.classList.add('active');
+    document.getElementById(tabName + '-tab').classList.add('active');
+}
+
+// Show hint
+function showHint(hintNumber) {
+    const hintDisplay = document.getElementById('hint-display');
+    const hintText = document.getElementById('hint-text');
+    
+    hintText.textContent = hints[hintNumber];
+    hintDisplay.style.display = 'block';
+}
+
+// Complete objective
+function completeObjective(objectiveNumber) {
+    const objective = document.getElementById(`obj-${objectiveNumber}`);
+    if (!objective.classList.contains('completed')) {
+        objective.classList.add('completed');
+        objective.querySelector('i').className = 'fas fa-check-circle';
+        completedObjectives++;
+        updateProgress();
+    }
+}
+
+// Update lab progress
+function updateProgress() {
+    labProgress = (completedObjectives / 4) * 100;
+    document.getElementById('lab-progress').style.width = labProgress + '%';
+    document.getElementById('progress-percentage').textContent = Math.round(labProgress) + '%';
+    
+    if (completedObjectives >= 4) {
+        document.getElementById('complete-lab').disabled = false;
+    }
+}
+
+// Lab simulation functions
+function startExploit() {
+    addTerminalOutput('Starting exploitation attempt...');
+    setTimeout(() => {
+        addTerminalOutput('Vulnerability detected in input validation!');
+        completeObjective(1);
+        completeObjective(2);
+    }, 2000);
+}
+
+function viewSource() {
+    addTerminalOutput('Viewing application source code...');
+    setTimeout(() => {
+        addTerminalOutput('Found insecure coding practices!');
+        completeObjective(3);
+    }, 1500);
+}
+
+function runScan() {
+    addTerminalOutput('Running security scan...');
+    setTimeout(() => {
+        addTerminalOutput('Scan complete. {{ module.title }} vulnerability confirmed.');
+        completeObjective(4);
+    }, 3000);
+}
+
+function runTool(toolName) {
+    const toolMessages = {
+        scanner: 'Vulnerability scanner detected {{ module.title }} issues',
+        network: 'Network analysis shows suspicious traffic patterns',
+        code: 'Code inspection reveals security flaws',
+        validator: 'Security validation failed - vulnerabilities present'
+    };
+    
+    addTerminalOutput(`Running ${toolName}...`);
+    setTimeout(() => {
+        addTerminalOutput(toolMessages[toolName]);
+    }, 1000);
+}
+
+function addTerminalOutput(message) {
+    const output = document.getElementById('terminal-output');
+    const line = document.createElement('div');
+    line.className = 'terminal-line';
+    line.innerHTML = `<span class="prompt">researcher@lab:~$</span> <span class="command">${message}</span>`;
+    output.appendChild(line);
+    output.scrollTop = output.scrollHeight;
+}
+
+// Handle terminal input
+function handleTerminalInput(event) {
+    if (event.key === 'Enter') {
+        const input = event.target.value.trim();
+        if (input) {
+            addTerminalOutput(input);
+            processCommand(input);
+            event.target.value = '';
+        }
+    }
+}
+
+function processCommand(command) {
+    const commands = {
+        'help': 'Available commands: scan, exploit, analyze, reset',
+        'scan': 'Scanning for vulnerabilities...',
+        'exploit': 'Attempting to exploit {{ module.title }}...',
+        'analyze': 'Analyzing application security...',
+        'reset': 'Resetting lab environment...'
+    };
+    
+    const response = commands[command.toLowerCase()] || `Command not found: ${command}`;
+    setTimeout(() => addTerminalOutput(response), 500);
+}
+
+// Mark lab as complete and navigate to assessment
+async function markCompleteAndGoToAssessment() {
+    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+    const moduleId = '{{ module.id }}';
+    
+    // Show loading state
+    const markBtn = document.getElementById('mark-complete');
+    const originalText = markBtn.innerHTML;
+    markBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Completing...';
+    markBtn.disabled = true;
+    
+    try {
+        // Complete the lab activity via the learning flow system
+        if (window.learningPath) {
+            await window.learningPath.completeActivity(moduleId, 'lab', {
+                score: 100,
+                timeSpent: timeSpent
+            });
+            
+            // Show success notification
+            if (window.gamificationEngine) {
+                window.gamificationEngine.showNotification({
+                    type: 'success',
+                    title: 'Lab Completed! 🎉',
+                    message: '+75 XP earned! Redirecting to assessment...',
+                    icon: '✅',
+                    duration: 2000
+                });
+            }
+            
+            // Navigate to assessment after short delay
+            setTimeout(() => {
+                window.location.href = `/assessment/${moduleId}`;
+            }, 2000);
+        } else {
+            // Fallback: try API endpoint
+            const response = await fetch('/api/gamification/complete-activity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    module_id: moduleId,
+                    activity_type: 'lab',
+                    score: 100,
+                    time_spent: timeSpent
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Lab completed! +75 XP earned');
+                window.location.href = `/assessment/${moduleId}`;
+            } else {
+                alert(result.error || 'Failed to complete lab');
+                markBtn.innerHTML = originalText;
+                markBtn.disabled = false;
+            }
+        }
+    } catch (error) {
+        console.error('Error completing lab:', error);
+        alert('An error occurred while completing lab');
+        markBtn.innerHTML = originalText;
+        markBtn.disabled = false;
+    }
+}
+
+function resetLab() {
+    labProgress = 0;
+    completedObjectives = 0;
+    
+    // Reset objectives
+    document.querySelectorAll('.objective').forEach(obj => {
+        obj.classList.remove('completed');
+        obj.querySelector('i').className = 'fas fa-circle';
+    });
+    
+    // Reset progress
+    updateProgress();
+    
+    // Clear terminal
+    document.getElementById('terminal-output').innerHTML = `
+        <div class="terminal-line">
+            <span class="prompt">researcher@lab:~$</span>
+            <span class="command">Lab environment reset</span>
+        </div>
+    `;
+    
+    // Reset timer
+    startTime = Date.now();
+}
+
+function nextStep() {
+    window.location.href = '/module/{{ module.id }}/quiz';
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    startTimer();
+    
+    // Terminal input
+    document.getElementById('terminal-cmd').addEventListener('keypress', handleTerminalInput);
+    
+    // Lab actions
+    document.getElementById('mark-complete').addEventListener('click', markCompleteAndGoToAssessment);
+    document.getElementById('reset-lab').addEventListener('click', resetLab);
+    
+    // Close modal when clicking outside
+    document.getElementById('success-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+    
+    // Auto-complete first objective after 5 seconds
+    setTimeout(() => {
+        completeObjective(1);
+    }, 5000);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card" style="display:flex; align-items:center; justify-content:space-between;">
+  <h2 style="margin:0">{{ module.id }} – {{ module.title }} Lab</h2>
+  <a href="/#labs" class="btn btn--outline" title="Back to Dashboard Labs tab">← Back to Dashboard</a>
+</div>
+
+<div class="card">
+  <p class="muted">User: {{ user }}</p>
+  <hr/>
+
+  {% if not challenges %}
+    <p>No challenges defined yet for this module.</p>
+    <a class="btn btn--outline" href="/#labs">Back</a>
+  {% else %}
+    <p>Solve all challenges below. Correct submissions are saved; finish them all to earn <strong>{{ module.points }} XP</strong> and complete the module.</p>
+    <div class="labs-grid">
+      {% for c in challenges %}
+      <div class="card" style="border:1px dashed var(--color-card-border);">
+        <h3>{{ c.id }} – {{ c.title }}</h3>
+        <p>{{ c.prompt }}</p>
+
+        {% if c.type == 'mcq' %}
+          <label class="form-label">Choose an option:</label>
+          <select id="ans-{{ c.id }}" class="form-control">
+            <option value="">-- Select --</option>
+            {% for opt in c.options %}
+              <option value="{{ opt }}">{{ opt }}</option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <label class="form-label">Your answer:</label>
+          <input id="ans-{{ c.id }}" class="form-control" type="text" placeholder="Enter answer / flag" />
+        {% endif %}
+
+        <div style="margin-top:.5rem">
+          <button class="btn btn--primary" onclick="submitChallenge('{{ module.id }}','{{ c.id }}')">Submit</button>
+          <span id="msg-{{ c.id }}" class="status status--info" style="margin-left:8px; display:inline-flex"></span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div style="margin-top:1rem">
+      <a href="/#labs" class="btn btn--outline">Back</a>
+      <a href="{{ url_for('certificate') }}" class="btn btn--secondary">View Certificate</a>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+async function submitChallenge(moduleId, challengeId){
+  const input = document.getElementById('ans-' + challengeId);
+  const msg = document.getElementById('msg-' + challengeId);
+  const answer = (input && input.value || '').trim();
+  if (!answer){ msg.textContent = 'Please enter an answer.'; return; }
+
+  const res = await fetch('/api/labs/submit', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ module_id: moduleId, challenge_id: challengeId, answer })
+  });
+  const j = await res.json();
+  if (!j.ok){ msg.textContent = 'Error: ' + (j.error || 'unknown'); return; }
+
+  if (j.correct){
+    msg.textContent = '✅ Correct';
+    input.disabled = true;
+  } else {
+    msg.textContent = '❌ Not correct — try again';
+  }
+
+  if (j.all_done) {
+    // Create success notification
+    const notification = document.createElement('div');
+    notification.className = 'status status--success';
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.left = '50%';
+    notification.style.transform = 'translateX(-50%)';
+    notification.style.zIndex = '1000';
+    notification.style.padding = '15px 25px';
+    notification.style.borderRadius = '4px';
+    notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    notification.textContent = '🎉 All challenges solved! Lab completed!';
+    
+    document.body.appendChild(notification);
+    
+    // Get module ID from URL
+    const pathParts = window.location.pathname.split('/');
+    const moduleId = pathParts[pathParts.length - 1] || 'A01';
+    
+    // Complete lab and continue to quiz via learning flow
+    setTimeout(() => {
+      notification.style.transition = 'opacity 0.5s ease';
+      notification.style.opacity = '0';
+      setTimeout(() => {
+        if (window.learningFlow) {
+          window.learningFlow.completeLabAndContinue(moduleId, 95);
+        } else {
+          window.location.href = "/#labs";
+        }
+      }, 500);
+    }, 2000);
+  }
+}
+</script>
+{% endblock %}

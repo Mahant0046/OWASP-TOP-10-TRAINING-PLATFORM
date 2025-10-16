@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env
+
+# Database files
+sqli.db
+*.sqlite
+*.db
+
+# IDE and OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+
+# Local settings
+*.log

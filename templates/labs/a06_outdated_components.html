@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header"><h1>A06 – Vulnerable & Outdated Components</h1><p>Old front-end component blindly injects HTML.</p></div>
+<div class="card"><div class="card__body">
+  <form method="POST">
+    <label class="form-label">HTML to render</label>
+    <textarea class="form-control" name="html" rows="3" placeholder="<img src=x onerror=alert(1)>"></textarea>
+    <button class="btn btn--primary" style="margin-top:8px">Render</button>
+  </form>
+  {% if payload %}
+    <h4 class="mt-8">Rendered (unsafe):</h4>
+    <div style="padding:12px;border:1px dashed var(--color-border);margin-top:8px">{{ payload|safe }}</div>
+    {% if solved %}<p class="status status--success" style="margin-top:12px">XSS achieved via outdated component.</p>{% endif %}
+  {% endif %}
+</div></div>
+{% endblock %}

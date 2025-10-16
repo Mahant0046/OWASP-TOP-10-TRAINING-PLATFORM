@@ -1,0 +1,302 @@
+{% extends "admin/base.html" %}
+{% block title %}Edit Module {{ module.id }} - Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1><i class="fas fa-edit"></i> Edit Module {{ module.id }}</h1>
+    <div class="admin-actions">
+        <a href="{{ url_for('admin_modules') }}" class="btn btn--outline">
+            <i class="fas fa-arrow-left"></i> Back to Modules
+        </a>
+    </div>
+</div>
+
+<div class="admin-content">
+    <div class="admin-card">
+        <div class="card-header">
+            <h3><i class="fas fa-cog"></i> Module Configuration</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" class="module-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title" class="form-label">Title *</label>
+                        <input type="text" id="title" name="title" class="form-control" 
+                               value="{{ module.title }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="difficulty" class="form-label">Difficulty</label>
+                        <select id="difficulty" name="difficulty" class="form-control">
+                            <option value="Easy" {{ 'selected' if module.difficulty == 'Easy' }}>Easy</option>
+                            <option value="Medium" {{ 'selected' if module.difficulty == 'Medium' }}>Medium</option>
+                            <option value="Hard" {{ 'selected' if module.difficulty == 'Hard' }}>Hard</option>
+                            <option value="Critical" {{ 'selected' if module.difficulty == 'Critical' }}>Critical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="3">{{ module.description }}</textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="points" class="form-label">Points (XP)</label>
+                        <input type="number" id="points" name="points" class="form-control" 
+                               value="{{ module.get('points', 100) }}" min="1" max="1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status" class="form-label">Status</label>
+                        <select id="status" name="status" class="form-control">
+                            <option value="available" {{ 'selected' if module.get('status', 'available') == 'available' }}>Available</option>
+                            <option value="locked" {{ 'selected' if module.get('status') == 'locked' }}>Locked</option>
+                            <option value="coming-soon" {{ 'selected' if module.get('status') == 'coming-soon' }}>Coming Soon</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="lab_available" {{ 'checked' if module.get('labAvailable', False) }}>
+                        <span class="checkmark"></span>
+                        Lab Available
+                    </label>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-file-alt"></i> Documentation</h4>
+                    
+                    {% if existing_doc %}
+                    <div class="existing-doc-info">
+                        <div class="doc-status">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Documentation exists for this module</span>
+                            <a href="{{ url_for('admin_edit_documentation', doc_id=existing_doc.id) }}" 
+                               class="btn btn--outline btn--xs">
+                                <i class="fas fa-edit"></i> Edit Documentation
+                            </a>
+                        </div>
+                        <div class="doc-preview">
+                            <strong>{{ existing_doc.title }}</strong>
+                            <p>{{ existing_doc.content[:200] }}{% if existing_doc.content|length > 200 %}...{% endif %}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="no-doc-info">
+                        <div class="doc-status">
+                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                            <span>No documentation exists for this module</span>
+                            <a href="{{ url_for('admin_create_documentation') }}?module={{ module.id }}" 
+                               class="btn btn--primary btn--xs">
+                                <i class="fas fa-plus"></i> Create Documentation
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doc_title" class="form-label">Quick Documentation Title</label>
+                        <input type="text" id="doc_title" name="doc_title" class="form-control" 
+                               placeholder="Enter documentation title...">
+                        <small class="form-help">Optional: Create basic documentation along with module update</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doc_content" class="form-label">Quick Documentation Content</label>
+                        <textarea id="doc_content" name="doc_content" class="form-control" rows="6" 
+                                  placeholder="Enter basic documentation content..."></textarea>
+                        <small class="form-help">Optional: Basic content that can be expanded later</small>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn--primary">
+                        <i class="fas fa-save"></i> Update Module
+                    </button>
+                    <a href="{{ url_for('admin_modules') }}" class="btn btn--outline">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Module Statistics -->
+    <div class="admin-card">
+        <div class="card-header">
+            <h3><i class="fas fa-chart-bar"></i> Module Statistics</h3>
+        </div>
+        <div class="card-body">
+            <div class="stats-placeholder">
+                <p class="text-muted">Module usage statistics would appear here...</p>
+                <small>Track user engagement, completion rates, and performance metrics</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.module-form {
+    max-width: 800px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 14px;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-help {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.form-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: var(--color-bg-1);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.form-section h4 {
+    margin: 0 0 20px 0;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.existing-doc-info,
+.no-doc-info {
+    margin-bottom: 20px;
+}
+
+.doc-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.doc-status i {
+    font-size: 16px;
+}
+
+.text-success {
+    color: var(--color-success);
+}
+
+.text-warning {
+    color: var(--color-warning);
+}
+
+.doc-preview {
+    padding: 15px;
+    background: var(--color-surface);
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+
+.doc-preview strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-text-primary);
+}
+
+.doc-preview p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+}
+
+.stats-placeholder {
+    text-align: center;
+    padding: 40px;
+}
+
+.stats-placeholder p {
+    margin-bottom: 8px;
+    color: var(--color-text-secondary);
+}
+
+.stats-placeholder small {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+}
+
+.text-muted {
+    color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .doc-status {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+</style>
+{% endblock %}

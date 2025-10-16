@@ -1,0 +1,124 @@
+{% extends "admin/base.html" %}
+{% block page_title %}System Settings{% endblock %}
+{% block content %}
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+    <div>
+      <h3 style="margin: 0 0 16px; color: var(--color-text);">System Information</h3>
+      <div style="background: var(--color-bg-1); padding: 16px; border-radius: 8px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border);">
+          <span>Flask Version:</span>
+          <code>{{ system_info.flask_version }}</code>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border);">
+          <span>Python Version:</span>
+          <code>{{ system_info.python_version }}</code>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border);">
+          <span>Debug Mode:</span>
+          <span class="badge {% if system_info.debug_mode %}badge--warning{% else %}badge--success{% endif %}">
+            {{ 'Enabled' if system_info.debug_mode else 'Disabled' }}
+          </span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border);">
+          <span>Secret Key:</span>
+          <span class="badge {% if system_info.secret_key_set %}badge--success{% else %}badge--error{% endif %}">
+            {{ 'Set' if system_info.secret_key_set else 'Not Set' }}
+          </span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Total Routes:</span>
+          <span style="font-weight: 600;">{{ system_info.total_routes }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h3 style="margin: 0 0 16px; color: var(--color-text);">Security Status</h3>
+      <div style="background: var(--color-bg-1); padding: 16px; border-radius: 8px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <i class="fas fa-exclamation-triangle" style="color: var(--color-warning);"></i>
+          <div>
+            <div style="font-weight: 600;">Demo Environment</div>
+            <div style="font-size: 12px; color: var(--color-text-secondary);">This is a training platform with intentional vulnerabilities</div>
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <i class="fas fa-shield-alt" style="color: var(--color-error);"></i>
+          <div>
+            <div style="font-weight: 600;">Weak Authentication</div>
+            <div style="font-size: 12px; color: var(--color-text-secondary);">Simple passwords for educational purposes</div>
+          </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fas fa-database" style="color: var(--color-info);"></i>
+          <div>
+            <div style="font-weight: 600;">In-Memory Storage</div>
+            <div style="font-size: 12px; color: var(--color-text-secondary);">Data resets on server restart</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div>
+    <h3 style="margin: 0 0 16px; color: var(--color-text);">Admin Accounts</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Created</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>admin</strong></td>
+          <td>Administrator</td>
+          <td><span class="badge badge--error">Super Admin</span></td>
+          <td>2025-01-01</td>
+          <td><span class="badge badge--success">Active</span></td>
+        </tr>
+        <tr>
+          <td><strong>moderator</strong></td>
+          <td>Site Moderator</td>
+          <td><span class="badge badge--warning">Moderator</span></td>
+          <td>2025-01-01</td>
+          <td><span class="badge badge--success">Active</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div style="margin-top: 32px;">
+    <h3 style="margin: 0 0 16px; color: var(--color-text);">System Actions</h3>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <button class="btn btn--outline" onclick="alert('Cache cleared successfully!')">
+        <i class="fas fa-broom"></i> Clear Cache
+      </button>
+      <button class="btn btn--outline" onclick="alert('Logs exported successfully!')">
+        <i class="fas fa-download"></i> Export Logs
+      </button>
+      <button class="btn btn--outline" onclick="alert('Backup created successfully!')">
+        <i class="fas fa-database"></i> Create Backup
+      </button>
+      <button class="btn btn--warning" onclick="alert('This would restart the server in production!')">
+        <i class="fas fa-redo"></i> Restart Server
+      </button>
+    </div>
+  </div>
+  
+  <div style="margin-top: 32px; padding: 16px; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(185, 28, 28, 0.1)); border: 1px solid rgba(220, 38, 38, 0.2); border-radius: 8px;">
+    <h4 style="margin: 0 0 12px; color: var(--color-error);">
+      <i class="fas fa-exclamation-triangle"></i> Important Security Notice
+    </h4>
+    <p style="margin: 0; font-size: 14px; color: var(--color-text-secondary);">
+      This is a <strong>training environment</strong> designed to demonstrate web vulnerabilities. 
+      It contains intentional security flaws and should <strong>never be deployed in production</strong>. 
+      All user data is stored in memory and will be lost when the server restarts.
+    </p>
+  </div>
+{% endblock %}

@@ -1,0 +1,836 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module.title }} - Quiz{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="content-header">
+        <div class="header-left">
+            <h1 class="page-title">
+                <i class="fas fa-clipboard-check"></i>
+                {{ module.title }} - Quiz
+            </h1>
+            <p class="page-subtitle">Test your knowledge of {{ module.title }} vulnerabilities</p>
+        </div>
+        <div class="header-right">
+            <div class="xp-indicator">
+                <i class="fas fa-star"></i>
+                <span>+50 XP (+25 bonus for 80%+)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-progress-container">
+        <div class="progress-steps">
+            <div class="step completed">
+                <div class="step-icon"><i class="fas fa-book"></i></div>
+                <div class="step-label">Documentation</div>
+                <div class="step-xp">50 XP</div>
+            </div>
+            <div class="step completed">
+                <div class="step-icon"><i class="fas fa-play-circle"></i></div>
+                <div class="step-label">Animation</div>
+                <div class="step-xp">25 XP</div>
+            </div>
+            <div class="step completed">
+                <div class="step-icon"><i class="fas fa-flask"></i></div>
+                <div class="step-label">Interactive Lab</div>
+                <div class="step-xp">75 XP</div>
+            </div>
+            <div class="step active">
+                <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                <div class="step-label">Quiz</div>
+                <div class="step-xp">50 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                <div class="step-label">Assessment</div>
+                <div class="step-xp">100 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-trophy"></i></div>
+                <div class="step-label">Badge</div>
+                <div class="step-xp">Complete</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quiz-container">
+        <div class="quiz-sidebar">
+            <div class="quiz-info">
+                <h4>Quiz Information</h4>
+                <div class="info-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>{{ questions|length if questions else 5 }} Questions</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="quiz-timer">No time limit</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-star"></i>
+                    <span>50 XP base reward</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>+25 XP for 80%+ score</span>
+                </div>
+            </div>
+            
+            <div class="quiz-progress">
+                <h4>Progress</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="quiz-progress"></div>
+                </div>
+                <p id="progress-text">0 of {{ questions|length if questions else 5 }} answered</p>
+            </div>
+            
+            <div class="question-navigator">
+                <h4>Questions</h4>
+                <div class="question-grid" id="question-nav">
+                    <!-- Question navigation will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-main">
+            <div id="quiz-start" class="quiz-start">
+                <div class="start-content">
+                    <div class="quiz-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h2>Ready to Test Your Knowledge?</h2>
+                    <p>This quiz will test your understanding of <strong>{{ module.title }}</strong> vulnerabilities.</p>
+                    
+                    <div class="quiz-stats">
+                        <div class="stat">
+                            <div class="stat-number">{{ questions|length if questions else 5 }}</div>
+                            <div class="stat-label">Questions</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">XP Reward</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">80%</div>
+                            <div class="stat-label">For Bonus</div>
+                        </div>
+                    </div>
+                    
+                    <button id="start-quiz" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play"></i>
+                        Start Quiz
+                    </button>
+                </div>
+            </div>
+            
+            <div id="quiz-content" style="display: none;">
+                <div class="question-container">
+                    <div class="question-header">
+                        <span class="question-number">Question <span id="current-question">1</span> of {{ questions|length if questions else 5 }}</span>
+                        <div class="question-timer">
+                            <i class="fas fa-clock"></i>
+                            <span id="question-time">0:00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-content">
+                        <h3 id="question-text">Loading question...</h3>
+                        <div class="answer-options" id="answer-options">
+                            <!-- Answer options will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="question-actions">
+                        <button id="prev-question" class="btn btn-outline" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                            Previous
+                        </button>
+                        <button id="next-question" class="btn btn-primary" disabled>
+                            Next
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button id="submit-quiz" class="btn btn-success" style="display: none;">
+                            <i class="fas fa-check"></i>
+                            Submit Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Modal -->
+<div id="results-modal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3 id="results-title"><i class="fas fa-check-circle text-success"></i> Quiz Completed!</h3>
+        </div>
+        <div class="modal-body">
+            <div class="results-summary">
+                <div class="score-display">
+                    <div class="score-circle">
+                        <div class="score-number" id="final-score">0%</div>
+                        <div class="score-label">Final Score</div>
+                    </div>
+                </div>
+                
+                <div class="results-stats">
+                    <div class="result-stat">
+                        <div class="stat-icon correct">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="correct-count">0</div>
+                            <div class="stat-label">Correct</div>
+                        </div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="stat-icon incorrect">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="incorrect-count">0</div>
+                            <div class="stat-label">Incorrect</div>
+                        </div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="stat-icon xp">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-number" id="xp-earned">0</div>
+                            <div class="stat-label">XP Earned</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="xp-animation" id="xp-animation">
+                <span class="xp-earned" id="xp-display">+0 XP</span>
+            </div>
+            
+            <div id="bonus-message" class="bonus-message" style="display: none;">
+                <i class="fas fa-trophy"></i>
+                <span>Excellent! You earned the bonus XP for scoring 80% or higher!</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="checkModuleCompletion()">
+                <i class="fas fa-trophy"></i>
+                Check Module Completion
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Module Completion Modal -->
+<div id="completion-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-trophy text-warning"></i> Module Completed!</h3>
+        </div>
+        <div class="modal-body">
+            <div class="completion-celebration">
+                <div class="badge-animation">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h4>Congratulations!</h4>
+                <p>You've completed all activities for <strong>{{ module.title }}</strong> and earned your module badge!</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="/assessment/{{ module.id }}" class="btn btn-success">
+                <i class="fas fa-clipboard-check"></i>
+                Take Final Assessment
+            </a>
+            <a href="/dashboard" class="btn btn-outline">
+                <i class="fas fa-home"></i>
+                Skip to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.quiz-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.quiz-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.quiz-info,
+.quiz-progress,
+.question-navigator {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.quiz-info h4,
+.quiz-progress h4,
+.question-navigator h4 {
+    margin: 0 0 16px 0;
+    color: #333;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    color: #666;
+}
+
+.info-item i {
+    width: 20px;
+    color: #007bff;
+}
+
+.question-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.question-nav-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.question-nav-item:hover {
+    border-color: #007bff;
+}
+
+.question-nav-item.answered {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.question-nav-item.current {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.quiz-main {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.quiz-start {
+    padding: 60px 40px;
+    text-align: center;
+}
+
+.quiz-icon {
+    font-size: 80px;
+    color: #007bff;
+    margin-bottom: 24px;
+}
+
+.quiz-start h2 {
+    margin: 0 0 16px 0;
+    color: #333;
+}
+
+.quiz-start p {
+    margin: 0 0 32px 0;
+    color: #666;
+    font-size: 16px;
+}
+
+.quiz-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 32px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.question-container {
+    padding: 32px;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.question-number {
+    font-weight: 600;
+    color: #007bff;
+}
+
+.question-timer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+}
+
+.question-content h3 {
+    margin: 0 0 24px 0;
+    color: #333;
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+.answer-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.answer-option {
+    padding: 16px 20px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: white;
+}
+
+.answer-option:hover {
+    border-color: #007bff;
+    background: #f8f9ff;
+}
+
+.answer-option.selected {
+    border-color: #007bff;
+    background: #007bff;
+    color: white;
+}
+
+.question-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.results-summary {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.score-display {
+    margin-bottom: 32px;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    color: white;
+}
+
+.score-number {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.score-label {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.results-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.result-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+}
+
+.stat-icon.correct { background: #28a745; }
+.stat-icon.incorrect { background: #dc3545; }
+.stat-icon.xp { background: #ffc107; }
+
+.bonus-message {
+    background: linear-gradient(135deg, #ffc107, #ff8f00);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.completion-celebration {
+    text-align: center;
+}
+
+.badge-animation {
+    font-size: 80px;
+    color: #ffc107;
+    margin-bottom: 20px;
+    animation: bounce 1s infinite;
+}
+
+.modal-large {
+    max-width: 600px;
+}
+
+@media (max-width: 768px) {
+    .quiz-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .quiz-stats {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .results-stats {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+</style>
+
+<script>
+// eslint-disable-next-line
+const quizData = {{ questions | tojson | safe }};
+let currentQuestionIndex = 0;
+let userAnswers = [];
+let startTime = Date.now();
+let questionStartTime = Date.now();
+
+// Initialize quiz
+function initializeQuiz() {
+    if (!quizData || quizData.length === 0) {
+        // Create sample questions if none provided
+        window.quizData = [
+            {
+                q: "What is the main cause of {{ module.title }} vulnerabilities?",
+                a: ["Poor input validation", "Weak encryption", "Network issues"],
+                c: 0
+            },
+            {
+                q: "Which of the following is a prevention technique for {{ module.title }}?",
+                a: ["Input sanitization", "Using HTTP", "Disabling firewalls"],
+                c: 0
+            },
+            {
+                q: "What is the potential impact of {{ module.title }} vulnerabilities?",
+                a: ["Data breach", "Slow performance", "UI issues"],
+                c: 0
+            },
+            {
+                q: "When should security controls be implemented?",
+                a: ["During development", "After deployment", "Only when attacked"],
+                c: 0
+            },
+            {
+                q: "What is the best approach to prevent {{ module.title }}?",
+                a: ["Security by design", "Reactive patching", "User training only"],
+                c: 0
+            }
+        ];
+    } else {
+        window.quizData = quizData;
+    }
+    
+    userAnswers = new Array(window.quizData.length).fill(-1);
+    createQuestionNavigator();
+}
+
+function createQuestionNavigator() {
+    const nav = document.getElementById('question-nav');
+    nav.innerHTML = '';
+    
+    for (let i = 0; i < window.quizData.length; i++) {
+        const item = document.createElement('div');
+        item.className = 'question-nav-item';
+        item.textContent = i + 1;
+        item.onclick = () => goToQuestion(i);
+        nav.appendChild(item);
+    }
+    
+    updateNavigator();
+}
+
+function startQuiz() {
+    document.getElementById('quiz-start').style.display = 'none';
+    document.getElementById('quiz-content').style.display = 'block';
+    startTime = Date.now();
+    loadQuestion(0);
+    startQuestionTimer();
+}
+
+function loadQuestion(index) {
+    const question = window.quizData[index];
+    document.getElementById('current-question').textContent = index + 1;
+    document.getElementById('question-text').textContent = question.q;
+    
+    const optionsContainer = document.getElementById('answer-options');
+    optionsContainer.innerHTML = '';
+    
+    question.a.forEach((answer, i) => {
+        const option = document.createElement('div');
+        option.className = 'answer-option';
+        option.textContent = answer;
+        option.onclick = () => selectAnswer(i);
+        
+        if (userAnswers[index] === i) {
+            option.classList.add('selected');
+        }
+        
+        optionsContainer.appendChild(option);
+    });
+    
+    updateNavigationButtons();
+    updateNavigator();
+    questionStartTime = Date.now();
+}
+
+function selectAnswer(answerIndex) {
+    userAnswers[currentQuestionIndex] = answerIndex;
+    
+    // Update UI
+    document.querySelectorAll('.answer-option').forEach((option, i) => {
+        option.classList.toggle('selected', i === answerIndex);
+    });
+    
+    updateNavigationButtons();
+    updateNavigator();
+    updateProgress();
+}
+
+function goToQuestion(index) {
+    currentQuestionIndex = index;
+    loadQuestion(index);
+}
+
+function nextQuestion() {
+    if (currentQuestionIndex < window.quizData.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion(currentQuestionIndex);
+    }
+}
+
+function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion(currentQuestionIndex);
+    }
+}
+
+function updateNavigationButtons() {
+    document.getElementById('prev-question').disabled = currentQuestionIndex === 0;
+    
+    const nextBtn = document.getElementById('next-question');
+    const submitBtn = document.getElementById('submit-quiz');
+    
+    if (currentQuestionIndex === window.quizData.length - 1) {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'inline-flex';
+        submitBtn.disabled = userAnswers[currentQuestionIndex] === -1;
+    } else {
+        nextBtn.style.display = 'inline-flex';
+        submitBtn.style.display = 'none';
+        nextBtn.disabled = userAnswers[currentQuestionIndex] === -1;
+    }
+}
+
+function updateNavigator() {
+    const navItems = document.querySelectorAll('.question-nav-item');
+    navItems.forEach((item, i) => {
+        item.classList.remove('current', 'answered');
+        
+        if (i === currentQuestionIndex) {
+            item.classList.add('current');
+        } else if (userAnswers[i] !== -1) {
+            item.classList.add('answered');
+        }
+    });
+}
+
+function updateProgress() {
+    const answered = userAnswers.filter(answer => answer !== -1).length;
+    const progress = (answered / window.quizData.length) * 100;
+    
+    document.getElementById('quiz-progress').style.width = progress + '%';
+    document.getElementById('progress-text').textContent = 
+        `${answered} of ${window.quizData.length} answered`;
+}
+
+function startQuestionTimer() {
+    setInterval(() => {
+        const elapsed = Math.floor((Date.now() - questionStartTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        document.getElementById('question-time').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+async function submitQuiz() {
+    const totalTime = Math.floor((Date.now() - startTime) / 1000);
+    
+    try {
+        const response = await fetch('/api/complete-quiz', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                module_id: '{{ module.id }}',
+                answers: userAnswers,
+                time_spent: totalTime
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showResults(result);
+        } else {
+            alert(result.error || 'Failed to submit quiz');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while submitting quiz');
+    }
+}
+
+function showResults(result) {
+    document.getElementById('final-score').textContent = result.score + '%';
+    document.getElementById('correct-count').textContent = result.correct_answers;
+    document.getElementById('incorrect-count').textContent = 
+        result.total_questions - result.correct_answers;
+    document.getElementById('xp-earned').textContent = result.xp_earned;
+    document.getElementById('xp-display').textContent = '+' + result.xp_earned + ' XP';
+    
+    if (result.score >= 80) {
+        document.getElementById('bonus-message').style.display = 'flex';
+    }
+    
+    // Update score circle color based on performance
+    const scoreCircle = document.querySelector('.score-circle');
+    if (result.score >= 80) {
+        scoreCircle.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+    } else if (result.score >= 60) {
+        scoreCircle.style.background = 'linear-gradient(135deg, #ffc107, #ff8f00)';
+    } else {
+        scoreCircle.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
+    }
+    
+    document.getElementById('results-modal').style.display = 'flex';
+}
+
+async function checkModuleCompletion() {
+    try {
+        const response = await fetch('/api/check-module-completion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                module_id: '{{ module.id }}'
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.module_completed && result.badge_awarded) {
+            document.getElementById('results-modal').style.display = 'none';
+            document.getElementById('completion-modal').style.display = 'flex';
+        } else {
+            // Close results modal and redirect to dashboard
+            document.getElementById('results-modal').style.display = 'none';
+            window.location.href = '/dashboard';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        window.location.href = '/dashboard';
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    initializeQuiz();
+    
+    document.getElementById('start-quiz').addEventListener('click', startQuiz);
+    document.getElementById('next-question').addEventListener('click', nextQuestion);
+    document.getElementById('prev-question').addEventListener('click', prevQuestion);
+    document.getElementById('submit-quiz').addEventListener('click', submitQuiz);
+    
+    // Close modals when clicking outside
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

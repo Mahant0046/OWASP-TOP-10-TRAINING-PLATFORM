@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header"><h1>A04 – Insecure Design</h1><p>Exploit discount logic to get the order for free or negative cost.</p></div>
+<div class="card"><div class="card__body">
+  <form method="POST" class="form">
+    <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-control" name="price" value="{{ price }}"></div>
+    <div class="form-group"><label class="form-label">Quantity</label><input class="form-control" name="qty" value="{{ qty }}"></div>
+    <div class="form-group"><label class="form-label">Coupon</label><input class="form-control" name="coupon" placeholder="SAVE-100"></div>
+    <div class="form-group"><label class="form-label">Discount % (client controlled)</label><input class="form-control" name="discount" value="100"></div>
+    <button class="btn btn--primary">Recalculate</button>
+  </form>
+  <p style="margin-top:12px"><strong>Total:</strong> ₹{{ total }}</p>
+  {% if msg %}<p class="status status--success" style="margin-top:12px">{{ msg }}</p>{% endif %}
+</div></div>
+{% endblock %}

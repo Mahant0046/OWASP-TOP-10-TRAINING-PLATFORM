@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header"><h1>A10 – SSRF</h1><p>Server fetches an arbitrary URL.</p></div>
+<div class="card"><div class="card__body">
+  <form method="POST">
+    <label class="form-label">URL to fetch</label>
+    <input class="form-control" name="url" placeholder="http://127.0.0.1:5000/internal/flag">
+    <button class="btn btn--primary" style="margin-top:8px">Fetch</button>
+  </form>
+  <p class="mt-8">{{ tip }}</p>
+  {% if error %}<p class="status status--error" style="margin-top:12px">{{ error }}</p>{% endif %}
+  {% if data %}
+    <h4 class="mt-8">Response (first 2000 chars):</h4>
+    <pre><code>{{ data }}</code></pre>
+  {% endif %}
+</div></div>
+{% endblock %}

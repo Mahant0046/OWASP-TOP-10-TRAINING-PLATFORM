@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module.title }} - Documentation{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="content-header">
+        <div class="header-left">
+            <h1 class="page-title">
+                <i class="fas fa-book"></i>
+                {{ module.title }} - Documentation
+            </h1>
+            <p class="page-subtitle">Learn about {{ module.title }} vulnerabilities and security best practices</p>
+        </div>
+        <div class="header-right">
+            <div class="xp-indicator">
+                <i class="fas fa-star"></i>
+                <span>+50 XP upon completion</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-progress-container">
+        <div class="progress-steps">
+            <div class="step active">
+                <div class="step-icon"><i class="fas fa-book"></i></div>
+                <div class="step-label">Documentation</div>
+                <div class="step-xp">50 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-play-circle"></i></div>
+                <div class="step-label">Animation</div>
+                <div class="step-xp">25 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-flask"></i></div>
+                <div class="step-label">Interactive Lab</div>
+                <div class="step-xp">75 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-clipboard-check"></i></div>
+                <div class="step-label">Quiz</div>
+                <div class="step-xp">50 XP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon"><i class="fas fa-trophy"></i></div>
+                <div class="step-label">Badge</div>
+                <div class="step-xp">Complete</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="documentation-content">
+        {% if documentation %}
+            <div class="doc-section">
+                <h2>{{ documentation.title }}</h2>
+                <div class="doc-content">
+                    {{ documentation.content | safe }}
+                </div>
+            </div>
+        {% else %}
+            <div class="doc-section">
+                <h2>{{ module.title }} Overview</h2>
+                <div class="doc-content">
+                    <p>This module covers the security vulnerabilities related to <strong>{{ module.title }}</strong>.</p>
+                    
+                    <h3>Learning Objectives</h3>
+                    <ul>
+                        <li>Understand the nature of {{ module.title }} vulnerabilities</li>
+                        <li>Learn how to identify these vulnerabilities in applications</li>
+                        <li>Discover prevention techniques and best practices</li>
+                        <li>Practice exploitation and mitigation in a safe environment</li>
+                    </ul>
+
+                    <h3>Difficulty Level</h3>
+                    <div class="difficulty-badge difficulty-{{ module.difficulty.lower() }}">
+                        {{ module.difficulty }}
+                    </div>
+
+                    <h3>Points Available</h3>
+                    <p>This module offers <strong>{{ module.points }}</strong> total points upon completion.</p>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Note:</strong> Complete all sections of this module to earn the full XP rewards and module badge!
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="documentation-actions">
+        <div class="reading-timer">
+            <i class="fas fa-clock"></i>
+            <span id="reading-time">0:00</span>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="complete-documentation" class="btn btn-success">
+                <i class="fas fa-check"></i>
+                Mark as Complete (+50 XP)
+            </button>
+            <a href="/module/{{ module.id }}/animation" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                Next: Animation
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-check-circle text-success"></i> Documentation Completed!</h3>
+        </div>
+        <div class="modal-body">
+            <p>Congratulations! You've earned <strong>50 XP</strong> for completing the documentation.</p>
+            <div class="xp-animation">
+                <span class="xp-earned">+50 XP</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="nextStep()">
+                <i class="fas fa-play-circle"></i>
+                Continue to Animation
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.module-progress-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 50px;
+    right: 50px;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 20px;
+}
+
+.step.active .step-icon {
+    background: #4CAF50;
+    color: white;
+}
+
+.step.completed .step-icon {
+    background: #2196F3;
+    color: white;
+}
+
+.step-label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.step-xp {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.documentation-content {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.documentation-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.reading-timer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-weight: 500;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.difficulty-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.difficulty-easy { background: #E8F5E8; color: #2E7D32; }
+.difficulty-medium { background: #FFF3E0; color: #F57C00; }
+.difficulty-hard { background: #FFEBEE; color: #C62828; }
+
+.xp-indicator {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 0;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    padding: 20px 24px 0;
+    text-align: center;
+}
+
+.modal-body {
+    padding: 20px 24px;
+    text-align: center;
+}
+
+.modal-footer {
+    padding: 0 24px 24px;
+    text-align: center;
+}
+
+.xp-animation {
+    margin: 16px 0;
+}
+
+.xp-earned {
+    display: inline-block;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 18px;
+    animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+</style>
+
+<script>
+let startTime = Date.now();
+let timerInterval;
+
+// Start reading timer
+function startTimer() {
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        document.getElementById('reading-time').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+// Complete documentation
+async function completeDocumentation() {
+    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+    
+    try {
+        const response = await fetch('/api/complete-documentation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                module_id: '{{ module.id }}',
+                time_spent: timeSpent
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('success-modal').style.display = 'flex';
+            document.getElementById('complete-documentation').disabled = true;
+            document.getElementById('complete-documentation').innerHTML = 
+                '<i class="fas fa-check"></i> Completed';
+            clearInterval(timerInterval);
+        } else {
+            alert(result.error || 'Failed to complete documentation');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while completing documentation');
+    }
+}
+
+function nextStep() {
+    window.location.href = '/module/{{ module.id }}/animation';
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    startTimer();
+    
+    document.getElementById('complete-documentation').addEventListener('click', completeDocumentation);
+    
+    // Close modal when clicking outside
+    document.getElementById('success-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

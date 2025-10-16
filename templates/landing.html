@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OWASP Top 10 Training Platform - Master Web Security</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="landing-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <nav class="landing-nav">
+      <div class="nav-container">
+        <div class="logo">
+          <i class="fas fa-shield-alt"></i>
+          <span>OWASP Training</span>
+        </div>
+        <div class="nav-links">
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#modules" class="nav-link">Modules</a>
+          <a href="#about" class="nav-link">About</a>
+          <a href="{{ url_for('login') }}" class="btn btn--outline btn--sm">Login</a>
+          <a href="{{ url_for('signup') }}" class="btn btn--primary btn--sm">Get Started</a>
+        </div>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Master Web Security with
+          <span class="gradient-text">OWASP Top 10</span>
+        </h1>
+        <p class="hero-description">
+          Interactive learning platform featuring animated demonstrations, hands-on labs, 
+          and comprehensive training on the most critical web application security risks.
+        </p>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-number">10</div>
+            <div class="stat-label">Security Modules</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Animations</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Interactive Labs</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">2000+</div>
+            <div class="stat-label">XP to Earn</div>
+          </div>
+        </div>
+        <div class="hero-cta">
+          <a href="{{ url_for('signup') }}" class="btn btn--primary btn--lg">
+            <i class="fas fa-rocket"></i> Start Learning Free
+          </a>
+          <a href="{{ url_for('documentation') }}" class="btn btn--outline btn--lg">
+            <i class="fas fa-book"></i> Browse Documentation
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="floating-card card-1">
+          <i class="fas fa-shield-alt"></i>
+          <span>Broken Access Control</span>
+        </div>
+        <div class="floating-card card-2">
+          <i class="fas fa-lock"></i>
+          <span>Cryptographic Failures</span>
+        </div>
+        <div class="floating-card card-3">
+          <i class="fas fa-code"></i>
+          <span>Injection Attacks</span>
+        </div>
+        <div class="security-badge">
+          <i class="fas fa-award"></i>
+          <div>Master Badge</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features-section">
+    <div class="container">
+      <div class="section-header-center">
+        <h2>Comprehensive Security Training</h2>
+        <p>Everything you need to master web application security</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-play-circle"></i>
+          </div>
+          <h3>Animated Demonstrations</h3>
+          <p>Watch step-by-step visual demonstrations of each vulnerability with detailed explanations and real-world scenarios.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-flask"></i>
+          </div>
+          <h3>Interactive Labs</h3>
+          <p>Practice exploiting vulnerabilities in a safe, controlled environment with hands-on exercises.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <h3>Code Examples</h3>
+          <p>Compare vulnerable and secure code implementations side-by-side to understand best practices.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-clipboard-check"></i>
+          </div>
+          <h3>Knowledge Assessments</h3>
+          <p>Test your understanding with comprehensive quizzes and earn XP for each completed module.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <h3>Gamification</h3>
+          <p>Earn XP, unlock badges, and track your progress on the leaderboard as you master each vulnerability.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <h3>Certificates</h3>
+          <p>Earn completion certificates to showcase your security expertise and commitment to learning.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modules Section -->
+  <section id="modules" class="modules-section">
+    <div class="container">
+      <div class="section-header-center">
+        <h2>OWASP Top 10 Vulnerabilities</h2>
+        <p>Master the most critical web application security risks</p>
+      </div>
+
+      <div class="modules-showcase">
+        <div class="module-item">
+          <div class="module-number">A01</div>
+          <div class="module-info">
+            <h4>Broken Access Control</h4>
+            <p>Learn about authorization failures and privilege escalation</p>
+          </div>
+          <div class="module-badge critical">Critical</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A02</div>
+          <div class="module-info">
+            <h4>Cryptographic Failures</h4>
+            <p>Understand encryption weaknesses and data exposure</p>
+          </div>
+          <div class="module-badge high">High</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A03</div>
+          <div class="module-info">
+            <h4>Injection</h4>
+            <p>Master SQL, NoSQL, and command injection attacks</p>
+          </div>
+          <div class="module-badge critical">Critical</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A04</div>
+          <div class="module-info">
+            <h4>Insecure Design</h4>
+            <p>Identify design flaws and security control gaps</p>
+          </div>
+          <div class="module-badge high">High</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A05</div>
+          <div class="module-info">
+            <h4>Security Misconfiguration</h4>
+            <p>Prevent common configuration mistakes</p>
+          </div>
+          <div class="module-badge medium">Medium</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A06</div>
+          <div class="module-info">
+            <h4>Vulnerable Components</h4>
+            <p>Manage dependencies and outdated libraries</p>
+          </div>
+          <div class="module-badge medium">Medium</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A07</div>
+          <div class="module-info">
+            <h4>Authentication Failures</h4>
+            <p>Secure user authentication and session management</p>
+          </div>
+          <div class="module-badge high">High</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A08</div>
+          <div class="module-info">
+            <h4>Data Integrity Failures</h4>
+            <p>Protect software updates and critical data</p>
+          </div>
+          <div class="module-badge medium">Medium</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A09</div>
+          <div class="module-info">
+            <h4>Logging & Monitoring Failures</h4>
+            <p>Implement security logging and incident response</p>
+          </div>
+          <div class="module-badge medium">Medium</div>
+        </div>
+
+        <div class="module-item">
+          <div class="module-number">A10</div>
+          <div class="module-info">
+            <h4>Server-Side Request Forgery</h4>
+            <p>Prevent SSRF attacks and internal network access</p>
+          </div>
+          <div class="module-badge high">High</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Learning Path Section -->
+  <section class="learning-path-section">
+    <div class="container">
+      <div class="section-header-center">
+        <h2>Your Learning Journey</h2>
+        <p>Follow our structured path to security mastery</p>
+      </div>
+
+      <div class="learning-path">
+        <div class="path-step">
+          <div class="path-icon">📚</div>
+          <h4>1. Study Documentation</h4>
+          <p>Read comprehensive theory and examples</p>
+          <div class="path-reward">+50 XP</div>
+        </div>
+        <div class="path-connector">→</div>
+        <div class="path-step">
+          <div class="path-icon">🎬</div>
+          <h4>2. Watch Animations</h4>
+          <p>Visual demonstrations of attacks</p>
+          <div class="path-reward">+25 XP</div>
+        </div>
+        <div class="path-connector">→</div>
+        <div class="path-step">
+          <div class="path-icon">🧪</div>
+          <h4>3. Practice in Labs</h4>
+          <p>Hands-on exploitation exercises</p>
+          <div class="path-reward">+75 XP</div>
+        </div>
+        <div class="path-connector">→</div>
+        <div class="path-step">
+          <div class="path-icon">✅</div>
+          <h4>4. Take Quiz</h4>
+          <p>Test your knowledge</p>
+          <div class="path-reward">+50 XP</div>
+        </div>
+        <div class="path-connector">→</div>
+        <div class="path-step path-final">
+          <div class="path-icon">🏆</div>
+          <h4>5. Earn Badge</h4>
+          <p>Complete the module</p>
+          <div class="path-reward">Badge!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about-section">
+    <div class="container">
+      <div class="about-content">
+        <div class="about-text">
+          <h2>About OWASP Top 10</h2>
+          <p>The OWASP Top 10 is a standard awareness document for developers and web application security. It represents a broad consensus about the most critical security risks to web applications.</p>
+          <p>Our platform provides an interactive, engaging way to learn about these vulnerabilities through animations, hands-on labs, and comprehensive training materials.</p>
+          <div class="about-stats">
+            <div class="about-stat">
+              <i class="fas fa-users"></i>
+              <div>
+                <strong>1000+</strong>
+                <span>Active Learners</span>
+              </div>
+            </div>
+            <div class="about-stat">
+              <i class="fas fa-graduation-cap"></i>
+              <div>
+                <strong>500+</strong>
+                <span>Certificates Issued</span>
+              </div>
+            </div>
+            <div class="about-stat">
+              <i class="fas fa-star"></i>
+              <div>
+                <strong>4.8/5</strong>
+                <span>Average Rating</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual">
+          <div class="security-shield">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Master Web Security?</h2>
+        <p>Join thousands of developers learning to build secure applications</p>
+        <div class="cta-buttons">
+          <a href="{{ url_for('signup') }}" class="btn btn--primary btn--lg">
+            <i class="fas fa-rocket"></i> Start Learning Now
+          </a>
+          <a href="{{ url_for('login') }}" class="btn btn--outline btn--lg">
+            <i class="fas fa-sign-in-alt"></i> Login to Continue
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4><i class="fas fa-shield-alt"></i> OWASP Training</h4>
+          <p>Interactive platform for mastering web application security through hands-on learning.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#modules">Modules</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://owasp.org/www-project-top-ten/" target="_blank">OWASP Top 10</a></li>
+            <li><a href="https://owasp.org" target="_blank">OWASP Foundation</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Community</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Connect</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-discord"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 OWASP Training Platform. Built for educational purposes.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Animate on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.feature-card, .module-item, .path-step').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

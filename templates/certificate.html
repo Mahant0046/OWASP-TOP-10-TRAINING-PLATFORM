@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Certificates – OWASP Training{% endblock %}
+{% block content %}
+  <div class="section-header">
+    <h1>Certificates</h1>
+    <p>Congratulations {{ profile.name }}! Here are your earned certificates.</p>
+  </div>
+  <div class="certificates-content">
+    <div class="card">
+      <div class="card__body">
+        <div class="certificates-grid">
+          {% if modules %}
+            {% for m in modules %}
+            <div class="certificate-card">
+              <i class="fas fa-certificate" style="font-size:2rem;color:var(--color-primary);margin-bottom:1rem;"></i>
+              <h3>{{ m.title }}</h3>
+              <p>Certificate of Completion</p>
+              <p><strong>{{ m.id }}</strong> - OWASP Top 10</p>
+              <p style="font-size:0.8rem;color:var(--color-text-secondary);">Earned: {{ (m.completedAt or '')|default('', true) }}</p>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="no-certificates" style="text-align:center;padding:2rem;">
+              <i class="fas fa-certificate" style="font-size:3rem;color:var(--color-text-secondary);margin-bottom:1rem;"></i>
+              <h3>No Certificates Yet</h3>
+              <p>Complete modules to earn your security certificates!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

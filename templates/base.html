@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}OWASP Top 10 Security Training Platform{% endblock %}</title>
+
+  <!-- ✅ Correct static path -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/gamification.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/module-progression.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/profile-achievements.css') }}">
+
+  <!-- vendor assets -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Central State Manager -->
+  <script src="{{ url_for('static', filename='js/StateManager.js') }}"></script>
+
+  <!-- Modern Gamification System -->
+  <script src="{{ url_for('static', filename='js/gamification-engine.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/learning-path.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/gamification-integration.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lab-enhancer.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/lab-completion.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/profile-achievements-fix.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/profile-data-loader.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/progress-chart-fix.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/leaderboard-fix.js') }}"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard" class="logo">
+          <i class="fas fa-shield-alt"></i>
+          <span>OWASP Training</span>
+        </a>
+      </div>
+
+      <!-- Anchors work from any route; SPA on index -->
+      <ul class="nav-list">
+        <li><a class="nav-item active" data-tab="dashboard"   href="/dashboard#dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+        <li><a class="nav-item"        data-tab="modules"     href="/dashboard#modules"><i class="fas fa-graduation-cap"></i><span>Learning Modules</span></a></li>
+        <li><a class="nav-item"        data-tab="documentation" href="/dashboard#documentation"><i class="fas fa-book"></i><span>Documentation</span></a></li>
+        <li><a class="nav-item"        data-tab="animations"  href="/dashboard#animations"><i class="fas fa-play-circle"></i><span>Animations</span></a></li>
+        <li><a class="nav-item"        data-tab="labs"        href="/dashboard#labs"><i class="fas fa-flask"></i><span>Interactive Labs</span></a></li>
+        <li><a class="nav-item"        data-tab="assessments" href="/dashboard#assessments"><i class="fas fa-clipboard-check"></i><span>Assessments</span></a></li>
+        <li><a class="nav-item"        data-tab="leaderboard" href="/dashboard#leaderboard"><i class="fas fa-trophy"></i><span>Leaderboard</span></a></li>
+        <li><a class="nav-item"        data-tab="profile"     href="/dashboard#profile"><i class="fas fa-user"></i><span>Profile</span></a></li>
+        <li><a class="nav-item"        data-tab="certificates" href="/dashboard#certificates"><i class="fas fa-certificate"></i><span>Certificates</span></a></li>
+      </ul>
+
+      <div style="margin-top: 24px">
+        {% if session.user_id %}
+          <div class="status status--info" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <a class="btn btn--outline btn--sm" href="{{ url_for('logout') }}">Logout</a>
+          </div>
+        {% else %}
+          <div class="status status--info" style="display:flex;gap:8px;align-items:center">
+            <i class="fas fa-user-shield"></i><span>Guest</span>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:8px">
+            <a class="btn btn--outline btn--sm" href="{{ url_for('login') }}">Login</a>
+            <a class="btn btn--primary btn--sm" href="{{ url_for('signup') }}">Sign up</a>
+          </div>
+        {% endif %}
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="main-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-wrap">
+            {% for cat, msg in messages %}
+              <div class="status status--{{ 'success' if cat=='ok' else ('warning' if cat=='warn' else 'error') }}" style="margin-bottom:12px">{{ msg }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  {% block modals %}{% endblock %}
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+</body>
+</html>

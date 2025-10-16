@@ -1,0 +1,33 @@
+{% extends "auth_base.html" %}
+{% block title %}Admin Login – OWASP Training{% endblock %}
+{% block content %}
+  <div class="auth-card">
+    <div class="auth-card-header" style="background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);">
+      <h2><i class="fas fa-user-shield"></i> Admin Access</h2>
+      <p>Administrative login required</p>
+    </div>
+    <div class="auth-card-body">
+      <form method="post" action="{{ url_for('admin_login') }}">
+        <div class="form-group">
+          <label class="form-label" for="username">Admin Username</label>
+          <input class="form-control" id="username" name="username" placeholder="admin" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Admin Password</label>
+          <input class="form-control" id="password" name="password" type="password" placeholder="••••••••" required>
+        </div>
+        <button class="btn btn--primary btn--full-width" type="submit" style="background: linear-gradient(135deg, #DC2626, #B91C1C);">
+          <i class="fas fa-shield-alt"></i> Admin Login
+        </button>
+      </form>
+      
+      <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--color-border); text-align: center;">
+        <p style="margin: 0 0 12px; color: var(--color-text-secondary); font-size: 14px;">Demo Credentials:</p>
+        <div style="background: var(--color-bg-1); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 13px;">
+          <!-- <div><strong>Super Admin:</strong> admin / admin123</div>
+          <div><strong>Moderator:</strong> moderator / mod123</div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

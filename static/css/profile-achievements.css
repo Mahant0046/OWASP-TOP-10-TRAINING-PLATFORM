@@ -1,0 +1,239 @@
+/* Profile Achievements Styles */
+
+.achievement-card {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.achievement-card.earned {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-color: #28a745;
+    color: white;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    transform: translateY(-2px);
+}
+
+.achievement-card:not(.earned) {
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.achievement-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.achievement-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.achievement-description {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.achievement-xp {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #ffc107;
+    margin-bottom: 10px;
+}
+
+.achievement-card.earned .achievement-xp {
+    color: #fff3cd;
+}
+
+.achievement-earned-date {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.achievement-locked {
+    background: rgba(108, 117, 125, 0.2);
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.achievement-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 193, 7, 0.9);
+    color: #333;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.achievement-card.earned .achievement-badge {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.achievement-card.locked .achievement-badge {
+    background: rgba(108, 117, 125, 0.3);
+    color: #6c757d;
+}
+
+.achievement-status {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+/* Profile Stats Grid */
+.stats-grid-detailed {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-item-detailed {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.stat-icon-large {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border-radius: 50%;
+}
+
+.stat-content-detailed {
+    flex: 1;
+}
+
+.stat-number-large {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.stat-label-detailed {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Learning Progress */
+.learning-progress-detailed {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.learning-progress-detailed h4 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.progress-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.progress-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.progress-item span:first-child {
+    font-weight: 500;
+    min-width: 200px;
+}
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.progress-bar {
+    background: #e9ecef;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    flex: 1;
+    min-width: 100px;
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, #28a745, #20c997);
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #6c757d;
+    min-width: 50px;
+    text-align: right;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .stats-grid-detailed {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-item-detailed {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .progress-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .progress-bar-container {
+        width: 100%;
+    }
+    
+    .achievement-card {
+        margin: 5px;
+        min-height: 160px;
+    }
+}

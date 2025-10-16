@@ -1,0 +1,91 @@
+{% extends "admin/base.html" %}
+{% block page_title %}User Management{% endblock %}
+{% block content %}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h3 style="margin: 0; color: var(--color-text);">Registered Users ({{ users|length }})</h3>
+    <div style="display: flex; gap: 12px;">
+      <form method="post" action="{{ url_for('admin_reset_all_progress') }}" style="display: inline;">
+        <button type="submit" class="btn btn--error" 
+                onclick="return confirm('⚠️ DANGER: This will reset ALL user progress, XP, levels, and achievements. This action cannot be undone. Are you absolutely sure?')">
+          <i class="fas fa-redo"></i> Reset All Progress
+        </button>
+      </form>
+      <button class="btn btn--primary" onclick="alert('User creation feature coming soon!')">
+        <i class="fas fa-user-plus"></i> Add User
+      </button>
+    </div>
+  </div>
+  
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Name</th>
+        <th>XP Points</th>
+        <th>Modules Completed</th>
+        <th>Join Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for username, user in users.items() %}
+      <tr>
+        <td>
+          <strong>{{ username }}</strong>
+          {% if username == 'demo' %}
+            <span class="badge badge--info">Demo</span>
+          {% endif %}
+        </td>
+        <td>{{ user.name }}</td>
+        <td>
+          <span style="font-weight: 600; color: var(--color-primary);">{{ user.xp }}</span>
+        </td>
+        <td>
+          {% set completed_count = user.modules_completed if user.modules_completed else 0 %}
+          <span class="badge {% if completed_count >= 5 %}badge--success{% elif completed_count >= 2 %}badge--warning{% else %}badge--error{% endif %}">
+            {{ completed_count }}/10
+          </span>
+        </td>
+        <td>{{ user.joined_date }}</td>
+        <td>
+          <div class="btn-group">
+            <form method="post" action="{{ url_for('admin_reset_user_progress', username=username) }}" style="display: inline;">
+              <button type="submit" class="btn btn--outline btn--sm" 
+                      onclick="return confirm('Reset progress for {{ username }}?')">
+                <i class="fas fa-redo"></i> Reset
+              </button>
+            </form>
+            
+            {% if session.admin_role == 'super_admin' and username != 'demo' %}
+            <form method="post" action="{{ url_for('admin_delete_user', username=username) }}" style="display: inline;">
+              <button type="submit" class="btn btn--error btn--sm" 
+                      onclick="return confirm('Delete user {{ username }}? This cannot be undone!')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  {% if users|length == 0 %}
+  <div style="text-align: center; padding: 48px; color: var(--color-text-secondary);">
+    <i class="fas fa-users" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+    <h3>No Users Found</h3>
+    <p>No users have registered yet.</p>
+  </div>
+  {% endif %}
+  
+  <div style="margin-top: 32px; padding: 16px; background: var(--color-bg-1); border-radius: 8px;">
+    <h4 style="margin: 0 0 12px; color: var(--color-text);">User Management Tips</h4>
+    <ul style="margin: 0; color: var(--color-text-secondary); font-size: 14px;">
+      <li><strong>Reset Progress:</strong> Clears all XP and completed modules for a user</li>
+      <li><strong>Delete User:</strong> Permanently removes user account (Super Admin only)</li>
+      <li><strong>Demo User:</strong> Protected system account that cannot be deleted</li>
+      <li><strong>XP System:</strong> Users earn 100 XP per completed vulnerability module</li>
+    </ul>
+  </div>
+{% endblock %}

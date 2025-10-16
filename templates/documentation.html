@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWASP Top 10 Learning Documentation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .documentation-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .documentation-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .documentation-hero h1 {
+            font-size: 3.5rem;
+            margin: 0 0 20px 0;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .documentation-hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .learning-tracks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .track-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .track-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .track-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: var(--color-primary);
+        }
+
+        .track-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .track-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .track-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .track-card:hover .track-icon {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .track-beginner .track-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .track-intermediate .track-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .track-advanced .track-icon {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .track-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .track-subtitle {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin: 4px 0 0 0;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .doc-module-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
+        }
+
+        .doc-module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            transform-origin: left;
+        }
+
+        .doc-module-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.03));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .doc-module-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .doc-module-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .doc-module-card:hover::after {
+            opacity: 1;
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .module-id {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .module-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--color-text-primary);
+        }
+
+        .module-description {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .module-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--color-text-secondary);
+        }
+
+        .module-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-doc {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            z-index: 2;
+        }
+
+        .btn-doc::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-doc:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-doc:hover::before {
+            left: 100%;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        }
+
+        .btn-outline:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+
+        .stats-overview {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-overview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.02), rgba(118, 75, 162, 0.02));
+            pointer-events: none;
+        }
+
+        .stats-overview h2 {
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 24px 16px;
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            animation: countUp 1s ease-out;
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+
+        .progress-indicator {
+            width: 100%;
+            height: 6px;
+            background: var(--color-bg-2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .search-section {
+            margin-bottom: 32px;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            border: 2px solid rgba(0,0,0,0.08);
+            border-radius: 16px;
+            font-size: 1rem;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            color: var(--color-text-primary);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-tab {
+            padding: 12px 20px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 0.9rem;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .filter-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .filter-tab.active,
+        .filter-tab:hover {
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .filter-tab.active::before,
+        .filter-tab:hover::before {
+            left: 0;
+        }
+
+        .breadcrumb {
+            background: var(--color-bg-1);
+            padding: 12px 0;
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
+        .breadcrumb-link {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .notification--show {
+            transform: translateX(0);
+        }
+
+        .notification--success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--color-text-primary);
+        }
+
+        .notification-message {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .documentation-hero h1 {
+                font-size: 2rem;
+            }
+
+            .learning-tracks {
+                grid-template-columns: 1fr;
+            }
+
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .notification {
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+                max-width: none;
+            }
+        }
+
+        /* Additional animations */
+        .fade-in-up {
+            animation: fadeInUpStagger 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUpStagger {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Progress bar enhancement */
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Enhanced difficulty badges */
+        .difficulty-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .difficulty-beginner {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .difficulty-intermediate {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .difficulty-advanced {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <div class="container">
+                <nav class="breadcrumb-nav">
+                    <a href="/" class="breadcrumb-link">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Learning Documentation</span>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="documentation-hero">
+            <div class="container">
+                <h1><i class="fas fa-book"></i> OWASP Top 10 Learning Documentation</h1>
+                <p>Comprehensive learning materials, code examples, lab exercises, and prevention strategies for all OWASP Top 10 2021 vulnerabilities.</p>
+            </div>
+        </section>
+
+        <!-- Stats Overview -->
+        <section class="stats-overview">
+            <h2 style="margin: 0 0 20px 0; text-align: center; color: var(--color-text-primary);">
+                <i class="fas fa-chart-bar"></i> Learning Progress Overview
+            </h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-modules">10</div>
+                    <div class="stat-label">Total Modules</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="completed-docs">0</div>
+                    <div class="stat-label">Docs Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="total-study-time">45</div>
+                    <div class="stat-label">Hours of Content</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="total-xp">500</div>
+                    <div class="stat-label">Total XP Available</div>
+                </div>
+            </div>
+            <div class="progress-indicator">
+                <div class="progress-fill" id="overall-progress" style="width: 0%"></div>
+            </div>
+        </section>
+
+        <!-- Search and Filter -->
+        <section class="search-section">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search documentation..." id="doc-search">
+            </div>
+        </section>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <div class="filter-tab active" data-filter="all">
+                <i class="fas fa-list"></i> All Modules
+            </div>
+            <div class="filter-tab" data-filter="beginner">
+                <i class="fas fa-seedling"></i> Beginner
+            </div>
+            <div class="filter-tab" data-filter="intermediate">
+                <i class="fas fa-chart-line"></i> Intermediate
+            </div>
+            <div class="filter-tab" data-filter="advanced">
+                <i class="fas fa-rocket"></i> Advanced
+            </div>
+        </div>
+
+        <!-- Learning Tracks Overview -->
+        <section class="learning-tracks">
+            <div class="track-card track-beginner">
+                <div class="track-header">
+                    <div class="track-icon">🟢</div>
+                    <div>
+                        <h3 class="track-title">Beginner Track</h3>
+                        <p class="track-subtitle">Start Here - Foundation Concepts</p>
+                    </div>
+                </div>
+                <p>Perfect for those new to web security. Learn fundamental concepts and common vulnerabilities.</p>
+                <ul>
+                    <li><strong>A01:</strong> Broken Access Control</li>
+                    <li><strong>A05:</strong> Security Misconfiguration</li>
+                    <li><strong>A06:</strong> Vulnerable Components</li>
+                </ul>
+            </div>
+
+            <div class="track-card track-intermediate">
+                <div class="track-header">
+                    <div class="track-icon">🟡</div>
+                    <div>
+                        <h3 class="track-title">Intermediate Track</h3>
+                        <p class="track-subtitle">Hands-on Exploitation</p>
+                    </div>
+                </div>
+                <p>Build practical skills with hands-on exploitation techniques and secure coding practices.</p>
+                <ul>
+                    <li><strong>A02:</strong> Cryptographic Failures</li>
+                    <li><strong>A03:</strong> Injection Attacks</li>
+                    <li><strong>A07:</strong> Authentication Failures</li>
+                    <li><strong>A10:</strong> Server-Side Request Forgery</li>
+                </ul>
+            </div>
+
+            <div class="track-card track-advanced">
+                <div class="track-header">
+                    <div class="track-icon">🔴</div>
+                    <div>
+                        <h3 class="track-title">Advanced Track</h3>
+                        <p class="track-subtitle">Enterprise Security</p>
+                    </div>
+                </div>
+                <p>Master advanced concepts including secure architecture, threat modeling, and enterprise security.</p>
+                <ul>
+                    <li><strong>A04:</strong> Insecure Design</li>
+                    <li><strong>A08:</strong> Software Integrity Failures</li>
+                    <li><strong>A09:</strong> Logging & Monitoring Failures</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Documentation Modules Grid -->
+        <section class="module-grid" id="modules-grid">
+            <!-- Modules will be populated by JavaScript -->
+        </section>
+    </div>
+
+    <script>
+        // Documentation modules data
+        const documentationModules = [
+            {
+                id: 'A01',
+                title: 'Broken Access Control',
+                description: 'Learn about access control vulnerabilities, privilege escalation, and secure authorization patterns.',
+                difficulty: 'beginner',
+                studyTime: '4-5 hours',
+                xp: 50,
+                topics: ['Authorization', 'Privilege Escalation', 'IDOR', 'Path Traversal'],
+                docFile: 'A01-Broken-Access-Control.md'
+            },
+            {
+                id: 'A02',
+                title: 'Cryptographic Failures',
+                description: 'Master cryptographic implementations, secure key management, and encryption best practices.',
+                difficulty: 'intermediate',
+                studyTime: '5-6 hours',
+                xp: 50,
+                topics: ['Encryption', 'Hashing', 'Key Management', 'TLS/SSL'],
+                docFile: 'A02-Cryptographic-Failures.md'
+            },
+            {
+                id: 'A03',
+                title: 'Injection',
+                description: 'Understand injection attacks including SQL, NoSQL, OS command, and LDAP injection.',
+                difficulty: 'intermediate',
+                studyTime: '6-7 hours',
+                xp: 50,
+                topics: ['SQL Injection', 'NoSQL Injection', 'Command Injection', 'LDAP Injection'],
+                docFile: 'A03-Injection.md'
+            },
+            {
+                id: 'A04',
+                title: 'Insecure Design',
+                description: 'Learn secure design principles, threat modeling, and architectural security patterns.',
+                difficulty: 'advanced',
+                studyTime: '5-6 hours',
+                xp: 50,
+                topics: ['Threat Modeling', 'Secure Architecture', 'Design Patterns', 'Risk Assessment'],
+                docFile: 'A04-Insecure-Design.md'
+            },
+            {
+                id: 'A05',
+                title: 'Security Misconfiguration',
+                description: 'Identify and fix security misconfigurations in applications and infrastructure.',
+                difficulty: 'beginner',
+                studyTime: '3-4 hours',
+                xp: 50,
+                topics: ['Server Hardening', 'Default Configurations', 'Error Handling', 'Security Headers'],
+                docFile: 'A05-Security-Misconfiguration.md'
+            },
+            {
+                id: 'A06',
+                title: 'Vulnerable and Outdated Components',
+                description: 'Learn to identify and manage vulnerable dependencies and third-party components.',
+                difficulty: 'beginner',
+                studyTime: '3-4 hours',
+                xp: 50,
+                topics: ['Dependency Management', 'Vulnerability Scanning', 'Component Inventory', 'Update Strategies'],
+                docFile: 'A06-Vulnerable-Outdated-Components.md'
+            },
+            {
+                id: 'A07',
+                title: 'Identification and Authentication Failures',
+                description: 'Master authentication mechanisms, session management, and multi-factor authentication.',
+                difficulty: 'intermediate',
+                studyTime: '5-6 hours',
+                xp: 50,
+                topics: ['Authentication', 'Session Management', 'MFA', 'Password Security'],
+                docFile: 'A07-Identification-Authentication-Failures.md'
+            },
+            {
+                id: 'A08',
+                title: 'Software and Data Integrity Failures',
+                description: 'Understand software supply chain security, CI/CD security, and integrity verification.',
+                difficulty: 'advanced',
+                studyTime: '4-5 hours',
+                xp: 50,
+                topics: ['Supply Chain Security', 'CI/CD Security', 'Code Signing', 'Integrity Verification'],
+                docFile: 'A08-Software-Data-Integrity-Failures.md'
+            },
+            {
+                id: 'A09',
+                title: 'Security Logging and Monitoring Failures',
+                description: 'Implement comprehensive security logging, monitoring, and incident response.',
+                difficulty: 'advanced',
+                studyTime: '4-5 hours',
+                xp: 50,
+                topics: ['Security Logging', 'SIEM Integration', 'Incident Response', 'Threat Detection'],
+                docFile: 'A09-Security-Logging-Monitoring-Failures.md'
+            },
+            {
+                id: 'A10',
+                title: 'Server-Side Request Forgery (SSRF)',
+                description: 'Learn about SSRF attacks, exploitation techniques, and prevention strategies.',
+                difficulty: 'intermediate',
+                studyTime: '3-4 hours',
+                xp: 50,
+                topics: ['SSRF Attacks', 'URL Validation', 'Network Security', 'Cloud Metadata'],
+                docFile: 'A10-Server-Side-Request-Forgery.md'
+            }
+        ];
+
+        // Initialize the documentation page
+        function initDocumentationPage() {
+            renderModules(documentationModules);
+            setupEventListeners();
+            updateStats();
+        }
+
+        // Render modules grid
+        function renderModules(modules) {
+            const grid = document.getElementById('modules-grid');
+            grid.innerHTML = modules.map(module => `
+                <div class="doc-module-card" data-difficulty="${module.difficulty}">
+                    <div class="module-header">
+                        <span class="module-id">${module.id}</span>
+                        <span class="difficulty-badge difficulty-${module.difficulty}">${module.difficulty}</span>
+                    </div>
+                    <h3 class="module-title">${module.title}</h3>
+                    <p class="module-description">${module.description}</p>
+                    <div class="module-meta">
+                        <span class="meta-item">
+                            <i class="fas fa-clock"></i> ${module.studyTime}
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-star"></i> ${module.xp} XP
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-tags"></i> ${module.topics.length} topics
+                        </span>
+                    </div>
+                    <div class="module-actions">
+                        <a href="docs/${module.docFile}" class="btn-doc" onclick="trackDocAccess('${module.id}')">
+                            <i class="fas fa-book-open"></i> Read Documentation
+                        </a>
+                        <a href="/#modules" class="btn-doc btn-outline">
+                            <i class="fas fa-play"></i> Start Module
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            const searchInput = document.getElementById('doc-search');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filteredModules = documentationModules.filter(module =>
+                    module.title.toLowerCase().includes(query) ||
+                    module.description.toLowerCase().includes(query) ||
+                    module.topics.some(topic => topic.toLowerCase().includes(query))
+                );
+                renderModules(filteredModules);
+            });
+
+            // Filter tabs
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update active tab
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    // Filter modules
+                    const filter = tab.dataset.filter;
+                    const filteredModules = filter === 'all' 
+                        ? documentationModules 
+                        : documentationModules.filter(module => module.difficulty === filter);
+                    
+                    renderModules(filteredModules);
+                });
+            });
+        }
+
+        // Track documentation access
+        function trackDocAccess(moduleId) {
+            console.log(`Documentation accessed for module: ${moduleId}`);
+            
+            // Find the corresponding module data
+            const module = documentationModules.find(m => m.id === moduleId);
+            if (!module) return;
+            
+            // Create the proper documentation URL for tracking
+            const docUrl = `docs/${module.docFile}`;
+            
+            // If the main app is available, award XP
+            if (window.app && window.app.trackDocumentationAccess) {
+                window.app.trackDocumentationAccess(docUrl);
+            } else {
+                // Fallback: show a notification
+                showDocAccessNotification(moduleId);
+            }
+        }
+
+        // Show documentation access notification
+        function showDocAccessNotification(moduleId) {
+            const notification = document.createElement('div');
+            notification.className = 'notification notification--success';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-title">+50 XP</div>
+                    <div class="notification-message">Documentation accessed for ${moduleId}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('notification--show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('notification--show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Update statistics
+        function updateStats() {
+            // This would integrate with actual progress data
+            const totalModules = documentationModules.length;
+            const completedDocs = 0; // Would come from saved progress
+            const totalStudyTime = documentationModules.reduce((total, module) => {
+                const hours = parseInt(module.studyTime.split('-')[0]);
+                return total + hours;
+            }, 0);
+            const totalXP = documentationModules.reduce((total, module) => total + module.xp, 0);
+
+            document.getElementById('total-modules').textContent = totalModules;
+            document.getElementById('completed-docs').textContent = completedDocs;
+            document.getElementById('total-study-time').textContent = totalStudyTime;
+            document.getElementById('total-xp').textContent = totalXP;
+
+            // Update progress bar
+            const progress = (completedDocs / totalModules) * 100;
+            document.getElementById('overall-progress').style.width = `${progress}%`;
+        }
+
+        // Add scroll animations
+        function addScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all cards and sections
+            document.querySelectorAll('.doc-module-card, .track-card, .stat-item').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        }
+
+        // Add stagger animation to module cards
+        function staggerModuleCards() {
+            const cards = document.querySelectorAll('.doc-module-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in-up');
+            });
+        }
+
+        // Enhanced initialization
+        function initDocumentationPage() {
+            renderModules(documentationModules);
+            setupEventListeners();
+            updateStats();
+            
+            // Add animations after a short delay
+            setTimeout(() => {
+                addScrollAnimations();
+                staggerModuleCards();
+            }, 100);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initDocumentationPage);
+    </script>
+</body>
+</html>

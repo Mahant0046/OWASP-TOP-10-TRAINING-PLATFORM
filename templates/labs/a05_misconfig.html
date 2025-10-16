@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section-header"><h1>A05 – Security Misconfiguration</h1><p>Admin panel with default credentials.</p></div>
+<div class="card"><div class="card__body">
+  {% if not admin %}
+  <form method="POST">
+    <div class="form-group"><label class="form-label">Username</label><input class="form-control" name="username"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-control" type="password" name="password"></div>
+    <button class="btn btn--primary">Login</button>
+  </form>
+  {% if error %}<p class="status status--error" style="margin-top:12px">{{ error }}</p>{% endif %}
+  {% else %}
+  <p class="status status--success">Welcome, admin. Debug mode is on and everything is open 🎉</p>
+  <ul><li>Admin Email: admin@corp.local</li><li>Secrets exposed: TRUE</li></ul>
+  {% endif %}
+</div></div>
+{% endblock %}

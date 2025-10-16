@@ -1,0 +1,648 @@
+{% extends "base.html" %}
+{% block title %}OWASP Top 10 Security Training Platform{% endblock %}
+
+{% block content %}
+  <!-- Dashboard -->
+  <div id="dashboard" class="tab-content active">
+    <div class="dashboard-header">
+      <h1>Welcome Back, <span id="username">{{ profile.name if profile else 'Security Learner' }}</span>! 🛡️</h1>
+      <p>Continue your cybersecurity journey with the OWASP Top 10 vulnerabilities.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-content"><h3 id="completed-modules">{{ profile.modulesCompleted if profile else 0 }}</h3><p>Modules Completed</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon warning"><i class="fas fa-star"></i></div>
+        <div class="stat-content"><h3 id="total-xp">{{ profile.totalXP if profile else 0 }}</h3><p>Total XP</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon info"><i class="fas fa-medal"></i></div>
+        <div class="stat-content"><h3 id="badges-earned">{{ profile.badgesEarned|length if profile and profile.badgesEarned else 0 }}</h3><p>Badges Earned</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon error"><i class="fas fa-fire"></i></div>
+        <div class="stat-content"><h3 id="streak-days">{{ profile.streak if profile else 0 }}</h3><p>Day Streak</p></div>
+      </div>
+    </div>
+
+    <!-- Latest Assessment Scores Section -->
+    {% if profile.latestAssessments %}
+    <div class="assessment-scores-section">
+      <div class="section-header">
+        <h2>📊 Latest Assessment Scores</h2>
+        <p>Your recent assessment performance</p>
+      </div>
+      
+      <div class="assessment-scores-grid">
+        {% for assessment in profile.latestAssessments %}
+        <div class="assessment-score-card">
+          <div class="score-header">
+            <h4>{{ assessment.module_title }}</h4>
+            <div class="score-badge {% if assessment.score_percentage >= 80 %}excellent{% elif assessment.score_percentage >= 70 %}good{% else %}needs-improvement{% endif %}">
+              {{ assessment.score_percentage }}%
+            </div>
+          </div>
+          <div class="score-details">
+            <div class="score-item">
+              <span class="label">Attempt:</span>
+              <span class="value">#{{ assessment.attempt_number }}</span>
+            </div>
+            <div class="score-item">
+              <span class="label">Completed:</span>
+              <span class="value">{{ assessment.completed_at.strftime('%Y-%m-%d') if assessment.completed_at else 'N/A' }}</span>
+            </div>
+          </div>
+          <div class="score-actions">
+            <a href="/assessment/{{ assessment.module_id }}" class="btn btn--outline btn--small">
+              <i class="fas fa-redo"></i> Retake
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Access Documentation Section -->
+    <div class="quick-access-section">
+      <div class="section-header">
+        <h2>📚 Quick Access Documentation</h2>
+        <p>Jump straight into comprehensive security guides</p>
+      </div>
+      
+      <div class="quick-docs-grid">
+        <div class="quick-doc-card" onclick="window.location.href='/documentation'">
+          <div class="quick-doc-icon">📖</div>
+          <h3>All Documentation</h3>
+          <p>Browse complete OWASP Top 10 documentation library</p>
+          <div class="quick-doc-stats">
+            <span><i class="fas fa-book"></i> 10 Modules</span>
+            <span><i class="fas fa-clock"></i> 45+ Hours</span>
+          </div>
+        </div>
+        
+        <div class="quick-doc-card" onclick="window.location.href='/docs/A01-Broken-Access-Control.md'">
+          <div class="quick-doc-icon">🔐</div>
+          <h3>A01 - Access Control</h3>
+          <p>Learn about broken access control vulnerabilities</p>
+          <div class="quick-doc-badge beginner">Beginner</div>
+        </div>
+        
+        <div class="quick-doc-card" onclick="window.location.href='/docs/A03-Injection.md'">
+          <div class="quick-doc-icon">💉</div>
+          <h3>A03 - Injection</h3>
+          <p>Master SQL injection and other injection attacks</p>
+          <div class="quick-doc-badge intermediate">Intermediate</div>
+        </div>
+        
+        <div class="quick-doc-card" onclick="window.location.href='/docs/A02-Cryptographic-Failures.md'">
+          <div class="quick-doc-icon">🔒</div>
+          <h3>A02 - Cryptography</h3>
+          <p>Understand cryptographic failures and secure implementations</p>
+          <div class="quick-doc-badge intermediate">Intermediate</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+      <div class="progress-section">
+        <div class="card">
+          <div class="card__header">
+            <h3>Learning Progress</h3>
+            <span class="level-badge">Level <span id="current-level">{{ profile.level if profile else 1 }}</span></span>
+          </div>
+          <div class="card__body">
+            <div class="progress-bar-container">
+              <div class="progress-bar"><div class="progress-fill" id="xp-progress" style="width: 0%;" data-current-xp="{{ profile.currentXP if profile else 0 }}" data-next-level-xp="{{ profile.nextLevelXP if profile else 1000 }}"></div></div>
+              <span class="progress-text"><span id="current-xp">{{ profile.currentXP if profile else 0 }}</span> / <span id="next-level-xp">{{ profile.nextLevelXP if profile else 1000 }}</span> XP</span>
+            </div>
+            <div class="chart-container" style="position: relative; height: 300px;">
+              <canvas id="progressChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recent-achievements">
+        <div class="card">
+          <div class="card__header"><h3>Recent Achievements</h3></div>
+          <div class="card__body"><div id="recent-badges" class="badge-list"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modules -->
+  <div id="modules" class="tab-content">
+    <div class="section-header">
+      <h1>OWASP Top 10 Learning Modules</h1>
+      <p>Master the most critical web application security risks</p>
+    </div>
+
+    <div class="learning-flow-section">
+      <div class="card">
+        <div class="card__header"><h3>Learning Flow & Gamification</h3></div>
+        <div class="card__body">
+          <div class="platform-flow-diagram">
+            <div class="flow-row">
+              <div class="flow-step">
+                <div class="flow-icon">📚</div>
+                <div class="flow-title">Documentation</div>
+                <div class="flow-desc">Read theory, examples & prevention</div>
+                <div class="flow-reward">+50 XP</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">
+                <div class="flow-icon">🎬</div>
+                <div class="flow-title">Animations</div>
+                <div class="flow-desc">Watch visual demonstrations</div>
+                <div class="flow-reward">+25 XP</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">
+                <div class="flow-icon">🧪</div>
+                <div class="flow-title">Labs</div>
+                <div class="flow-desc">Hands-on exploitation</div>
+                <div class="flow-reward">+75 XP</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">
+                <div class="flow-icon">✅</div>
+                <div class="flow-title">Quiz</div>
+                <div class="flow-desc">Test your knowledge</div>
+                <div class="flow-reward">+50 XP</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step flow-step-final">
+                <div class="flow-icon">🏆</div>
+                <div class="flow-title">Badge</div>
+                <div class="flow-desc">Earn achievement</div>
+                <div class="flow-reward">Complete!</div>
+              </div>
+            </div>
+            
+            <div class="flow-legend">
+              <div class="legend-item">
+                <span class="legend-label">Total XP per module:</span>
+                <span class="legend-value">200 XP</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-label">Complete all 10:</span>
+                <span class="legend-value">2000+ XP + Master Badge 🌟</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modules-grid" id="modules-container"></div>
+  </div>
+
+  <!-- Documentation -->
+  <div id="documentation" class="tab-content">
+    <div class="section-header">
+      <h1>📚 OWASP Top 10 Learning Documentation</h1>
+      <p>Comprehensive guides, code examples, and prevention strategies</p>
+    </div>
+
+    <!-- Documentation Stats -->
+    <div class="stats-grid" style="margin-bottom: 32px;">
+      <div class="stat-card">
+        <div class="stat-icon info"><i class="fas fa-book"></i></div>
+        <div class="stat-content"><h3 id="doc-total-modules">10</h3><p>Total Modules</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-content"><h3 id="doc-completed">0</h3><p>Docs Completed</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+        <div class="stat-content"><h3 id="doc-study-time">45</h3><p>Hours Content</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon error"><i class="fas fa-star"></i></div>
+        <div class="stat-content"><h3 id="doc-total-xp">500</h3><p>XP Available</p></div>
+      </div>
+    </div>
+
+    <!-- Learning Tracks -->
+    <div class="card" style="margin-bottom: 32px;">
+      <div class="card__header">
+        <h3>📖 Learning Tracks</h3>
+      </div>
+      <div class="card__body">
+        <div class="learning-tracks-grid">
+          <div class="track-card track-beginner">
+            <div class="track-header">
+              <div class="track-icon">🟢</div>
+              <div class="track-info">
+                <h4>Beginner Track</h4>
+                <p>Foundation Concepts</p>
+              </div>
+            </div>
+            <ul class="track-modules">
+              <li><strong>A01:</strong> Broken Access Control</li>
+              <li><strong>A05:</strong> Security Misconfiguration</li>
+              <li><strong>A06:</strong> Vulnerable Components</li>
+            </ul>
+          </div>
+
+          <div class="track-card track-intermediate">
+            <div class="track-header">
+              <div class="track-icon">🟡</div>
+              <div class="track-info">
+                <h4>Intermediate Track</h4>
+                <p>Hands-on Exploitation</p>
+              </div>
+            </div>
+            <ul class="track-modules">
+              <li><strong>A02:</strong> Cryptographic Failures</li>
+              <li><strong>A03:</strong> Injection Attacks</li>
+              <li><strong>A07:</strong> Authentication Failures</li>
+              <li><strong>A10:</strong> Server-Side Request Forgery</li>
+            </ul>
+          </div>
+
+          <div class="track-card track-advanced">
+            <div class="track-header">
+              <div class="track-icon">🔴</div>
+              <div class="track-info">
+                <h4>Advanced Track</h4>
+                <p>Enterprise Security</p>
+              </div>
+            </div>
+            <ul class="track-modules">
+              <li><strong>A04:</strong> Insecure Design</li>
+              <li><strong>A08:</strong> Software Integrity Failures</li>
+              <li><strong>A09:</strong> Logging & Monitoring Failures</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card__body">
+        <div class="doc-search-section">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="doc-search" class="search-input" placeholder="Search documentation...">
+          </div>
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all"><i class="fas fa-list"></i> All</button>
+            <button class="filter-btn" data-filter="beginner"><i class="fas fa-seedling"></i> Beginner</button>
+            <button class="filter-btn" data-filter="intermediate"><i class="fas fa-chart-line"></i> Intermediate</button>
+            <button class="filter-btn" data-filter="advanced"><i class="fas fa-rocket"></i> Advanced</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documentation Grid -->
+    <div class="documentation-grid" id="documentation-container"></div>
+  </div>
+
+  <!-- Animations -->
+  <div id="animations" class="tab-content">
+    <div class="section-header">
+      <h1>OWASP Top 10 Animated Demonstrations</h1>
+      <p>Interactive animated walkthroughs of security vulnerabilities</p>
+    </div>
+    
+    <!-- Animation Dashboard -->
+    <div id="animation-dashboard" class="animation-dashboard">
+      <div class="welcome-section">
+        <div class="welcome-content">
+          <h2>Complete OWASP Top 10 Animation Training</h2>
+          <p>Experience fully animated, step-by-step demonstrations of all 10 critical web security vulnerabilities</p>
+          <div class="quick-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="animation-completed-count">0</span>
+              <span class="stat-label">Completed</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">50+</span>
+              <span class="stat-label">Animations</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">10</span>
+              <span class="stat-label">Vulnerabilities</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vulnerability Grid -->
+      <div class="vulnerability-grid">
+        <h3>OWASP Top 10 - Complete Animation Suite</h3>
+        <div class="vuln-cards" id="vulnerability-cards">
+          <!-- Vulnerability cards will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Animation Player -->
+    <div id="animation-player" class="animation-player hidden">
+      <div class="animation-container">
+        <!-- Animation Controls -->
+        <div class="animation-controls">
+          <button class="btn btn--outline btn--sm" id="back-to-animation-dashboard">← Back to Animations</button>
+          <div class="animation-title">
+            <h2 id="current-vulnerability-title">Loading...</h2>
+            <div class="vulnerability-meta">
+              <span class="difficulty-badge" id="difficulty-badge">Medium</span>
+              <span class="scene-progress">Scene <span id="current-scene">1</span> of <span id="total-scenes">5</span></span>
+            </div>
+          </div>
+          <div class="playback-controls">
+            <button class="control-btn" id="prev-scene" title="Previous Scene">⏮️</button>
+            <button class="control-btn" id="play-btn" title="Play">▶️</button>
+            <button class="control-btn" id="pause-btn" title="Pause">⏸️</button>
+            <button class="control-btn" id="next-scene" title="Next Scene">⏭️</button>
+            <button class="control-btn" id="restart-btn" title="Restart">🔄</button>
+            <select id="speed-control" class="form-control form-control--sm">
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="1.5">1.5x</option>
+              <option value="2">2x</option>
+              <option value="2.5">2.5x</option>
+              <option value="3">3x</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Animation Stage -->
+        <div class="animation-stage-container">
+          <div class="animation-stage" id="animation-stage">
+            <div class="scene-container" id="scene-container">
+              <!-- Animation scenes will be rendered here -->
+            </div>
+          </div>
+
+          <!-- Side Information Panel -->
+          <div class="info-panel">
+            <div class="panel-tabs">
+              <button class="panel-tab active" data-tab="explanation">💡 Explanation</button>
+              <button class="panel-tab" data-tab="code">💻 Code</button>
+              <button class="panel-tab" data-tab="prevention">🛡️ Prevention</button>
+            </div>
+            
+            <div class="panel-content">
+              <div class="tab-panel active" id="explanation-panel">
+                <h4>What's Happening</h4>
+                <p id="scene-explanation">Select a vulnerability to see detailed explanations of each attack step.</p>
+              </div>
+              
+              <div class="tab-panel" id="code-panel">
+                <h4>Code Analysis</h4>
+                <div class="code-tabs">
+                  <button class="code-tab active" data-code="vulnerable">❌ Vulnerable</button>
+                  <button class="code-tab" data-code="secure">✅ Secure</button>
+                </div>
+                <div class="code-container">
+                  <pre id="code-display"><code class="language-javascript">// Select a vulnerability to see code examples</code></pre>
+                </div>
+              </div>
+              
+              <div class="tab-panel" id="prevention-panel">
+                <h4>How to Prevent</h4>
+                <div id="prevention-content">
+                  <p>Prevention methods will be shown here for each vulnerability.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-container">
+          <div class="timeline-progress">
+            <div class="timeline-progress-bar" id="timeline-progress-bar"></div>
+          </div>
+          <div class="timeline-phases" id="timeline-phases">
+            <!-- Timeline phases populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Narration Bar -->
+        <div class="narration-bar">
+          <div class="narration-controls">
+            <button class="narration-btn" id="narration-toggle">🎵</button>
+            <button class="narration-btn" id="repeat-narration">🔄</button>
+          </div>
+          <div class="subtitle-container">
+            <div class="subtitle-text" id="subtitle-text">
+              Welcome to the complete OWASP Top 10 animation training platform...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Animation Completion Modal -->
+  <div id="animation-completion-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🎉 Animation Completed!</h2>
+        <button class="modal-close" onclick="closeAnimationModal()" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="completion-summary">
+          <div class="completion-icon">🏆</div>
+          <h3 id="completed-animation-title">Broken Access Control</h3>
+          <p>You've completed the full animation sequence!</p>
+          <div class="completion-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="scenes-completed">5</span>
+              <span class="stat-label">Scenes Watched</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="time-spent">8</span>
+              <span class="stat-label">Minutes</span>
+            </div>
+          </div>
+          <div class="completion-actions">
+            <button class="btn btn--primary" id="next-animation">Next Animation →</button>
+            <button class="btn btn--outline" id="replay-animation">🔄 Replay</button>
+            <button class="btn btn--outline" id="back-to-animations">📋 All Animations</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Labs -->
+  <div id="labs" class="tab-content">
+    <div class="section-header">
+      <h1>Interactive Security Labs</h1>
+      <p>Hands-on vulnerability demonstration environments</p>
+    </div>
+    <div id="labs-container" class="labs-grid"></div>
+  </div>
+
+  <!-- Assessments -->
+  <div id="assessments" class="tab-content">
+    <div class="section-header">
+      <h1>Knowledge Assessments</h1>
+      <p>Test your understanding with quizzes and challenges</p>
+    </div>
+    <div id="assessments-container" class="assessments-grid"></div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div id="leaderboard" class="tab-content">
+    <div class="section-header">
+      <h1>Global Leaderboard</h1>
+      <p>See how you rank against other security learners</p>
+    </div>
+    <div class="card"><div class="card__body"><div id="leaderboard-list" class="leaderboard-list"></div></div></div>
+  </div>
+
+  <!-- Profile -->
+  <div id="profile" class="tab-content">
+    <div class="section-header">
+      <h1>User Profile</h1>
+      <p>Track your learning journey and achievements</p>
+    </div>
+    <div class="profile-content">
+      <div class="profile-stats">
+        <div class="card">
+          <div class="card__body">
+            <div class="profile-header">
+              <div class="avatar"><i class="fas fa-user-shield"></i></div>
+              <div class="profile-info">
+                <h2 id="profile-name">Security Learner</h2>
+                <p>Level <span class="user-level" id="profile-level">5</span> Security Analyst</p>
+                <p><span class="user-total-xp" id="profile-total-xp">0</span> XP • <span class="user-streak" id="profile-streak">0</span> day streak</p>
+                <p>Member since <span id="join-date">2025-01-15</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card__header">
+            <h3>📈 Learning Progress</h3>
+          </div>
+          <div class="card__body">
+            <div class="learning-progress-widget">
+              <div class="progress-section">
+                <h4>XP Progress to Next Level</h4>
+                <div class="xp-progress-bar">
+                  <div class="progress-fill"></div>
+                </div>
+                <div class="xp-progress-text">0 / 100 XP</div>
+              </div>
+              
+              <div class="progress-section">
+                <h4>Activity Completion</h4>
+                <div class="progress-item">
+                  <span class="progress-label">📚 Documentation Read</span>
+                  <span class="progress-value" id="docs-completed">0/10</span>
+                </div>
+                <div class="progress-item">
+                  <span class="progress-label">🧪 Labs Completed</span>
+                  <span class="progress-value" id="labs-completed">0/10</span>
+                </div>
+                <div class="progress-item">
+                  <span class="progress-label">✅ Assessments Passed</span>
+                  <span class="progress-value" id="assessments-completed">0/10</span>
+                </div>
+                <div class="progress-item">
+                  <span class="progress-label">🎬 Animations Watched</span>
+                  <span class="progress-value" id="animations-completed">0/10</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card__header">
+            <h3>🏆 Achievement Gallery</h3>
+            <span class="achievement-count">0</span> earned
+          </div>
+          <div class="card__body">
+            <div id="achievement-gallery" class="achievement-gallery"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Certificates -->
+  <div id="certificates" class="tab-content">
+    <div class="section-header">
+      <h1>Certificates & Badges</h1>
+      <p>Your earned certifications and digital badges</p>
+    </div>
+    <div class="certificates-content">
+      <div class="card"><div class="card__body"><div id="earned-certificates" class="certificates-grid"></div></div></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block modals %}
+  <!-- Module Detail Modal -->
+  <div id="module-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modal-content"></div>
+        <div class="modal-actions">
+          <button class="btn btn--primary" id="start-module">Start Module</button>
+          <button class="btn btn--secondary" id="view-lab">View Lab</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assessment Modal -->
+  <div id="assessment-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Knowledge Assessment</h2>
+        <button class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="assessment-content">
+          <div class="question-container">
+            <h3 id="question-text"></h3>
+            <div id="question-options" class="options-grid"></div>
+          </div>
+          <div class="assessment-actions">
+            <button class="btn btn--primary" id="submit-answer">Submit Answer</button>
+            <button class="btn btn--secondary" id="next-question" style="display:none;">Next Question</button>
+          </div>
+        </div>
+        <div id="assessment-results" style="display:none;">
+          <h3>Assessment Complete!</h3>
+          <p id="score-text"></p>
+          <button class="btn btn--primary" id="close-assessment">Continue Learning</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update progress bar width
+    const progressFill = document.getElementById('xp-progress');
+    if (progressFill) {
+        const currentXP = parseInt(progressFill.dataset.currentXp) || 0;
+        const nextLevelXP = parseInt(progressFill.dataset.nextLevelXp) || 1000;
+        const percentage = nextLevelXP > 0 ? Math.round((currentXP / nextLevelXP) * 100 * 10) / 10 : 0;
+        progressFill.style.width = percentage + '%';
+    }
+});
+</script>
+{% endblock %}

@@ -198,11 +198,11 @@ class SecureEncryption:
 ## ✅ Security Checklist
 
 ### Development Phase
-- [ ] Use strong, modern cryptographic algorithms
-- [ ] Implement proper key management practices
-- [ ] Use cryptographically secure random number generators
-- [ ] Apply appropriate hashing for passwords (bcrypt, Argon2)
-- [ ] Implement proper certificate validation
+-  Use strong, modern cryptographic algorithms
+-  Implement proper key management practices
+-  Use cryptographically secure random number generators
+-  Apply appropriate hashing for passwords (bcrypt, Argon2)
+-  Implement proper certificate validation
 
 ### Testing Phase
 -  Test cryptographic implementations for strength

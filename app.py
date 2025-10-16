@@ -114,7 +114,8 @@ PROFILES = {
     3: {"id": 3, "name": "Carol", "email": "carol@corp.local", "salary": "₹21,50,000"},
 }
 
-# A09: intentionally no logging (we’ll track attempts in memory just to award XP)
+# A09: intentionally no logging (we'll track attempts in memory just to award XP)
+FAILED_ATTEMPTS = {}
 
 # A10: internal-only flag endpoint (SSRF target)
 INTERNAL_FLAG = "FLAG-OWASP-SSRF-127.0.0.1"
@@ -1076,6 +1077,9 @@ def a08_integrity():
 @app.route("/labs/A09", methods=["GET","POST"])
 @app.route("/labs/a09", methods=["GET","POST"])  # Alternative route
 def a09_logging():
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
     error = None
     user_ip = request.remote_addr or "local"
     cnt = FAILED_ATTEMPTS.get(user_ip, 0)
